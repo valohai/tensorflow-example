@@ -132,7 +132,7 @@ def train():
 
     saver = tf.train.Saver()
 
-    #saver.restore(sess, "./model.ckpt")
+    #saver.restore(sess, FLAGS.output_path)
     # for i in range(FLAGS.max_steps):
     #     _, acc = sess.run([merged, accuracy], feed_dict=feed_dict(False))
     #     print('Accuracy at step %s: %s' % (i, acc))
@@ -165,7 +165,8 @@ def train():
     _, acc = sess.run([merged, accuracy], feed_dict=feed_dict(False))
     print('Final accuracy %s' % acc)
 
-    # saver.save(sess, "./model.ckpt")
+    if len(FLAGS.output_path) > 0:
+        saver.save(sess, FLAGS.output_path)
 
     train_writer.close()
     test_writer.close()
@@ -201,5 +202,7 @@ if __name__ == '__main__':
                         help='Directory for storing input data')
     parser.add_argument('--log_dir', type=str, default='/tmp/tensorflow/mnist/logs/mnist_with_summaries',
                         help='Summaries log directory')
+    parser.add_argument('--output_path', type=str, default='',
+                        help='Directory for storing input data')
     FLAGS, unparsed = parser.parse_known_args()
     tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
