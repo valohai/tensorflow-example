@@ -15,7 +15,7 @@ FLAGS = None
 
 def train():
     # Import data
-    mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True, fake_data=FLAGS.fake_data)
+    mnist = input_data.read_data_sets('/tmp/mnist', one_hot=True, fake_data=FLAGS.fake_data)
 
     sess = tf.InteractiveSession()
 
