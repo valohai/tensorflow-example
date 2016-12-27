@@ -1,0 +1,7 @@
+---
+
+- step:
+    command: ls -la
+
+- step:
+    command: python /tmp/code/my_mnist.py
