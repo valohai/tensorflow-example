@@ -4,4 +4,5 @@
     command: ls -la
 
 - step:
+    name: run training
     command: python /tmp/code/my_mnist.py
