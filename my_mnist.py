@@ -6,6 +6,7 @@ from __future__ import print_function
 
 import argparse
 import sys
+import json
 import numpy as np
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
@@ -98,8 +99,8 @@ def train():
     tf.summary.scalar('cross_entropy', cross_entropy)
 
     with tf.name_scope('train'):
-        train_step = tf.train\
-            .AdamOptimizer(FLAGS.learning_rate)\
+        train_step = tf.train \
+            .AdamOptimizer(FLAGS.learning_rate) \
             .minimize(cross_entropy)
 
     with tf.name_scope('accuracy'):
@@ -132,7 +133,7 @@ def train():
 
     saver = tf.train.Saver()
 
-    #saver.restore(sess, FLAGS.output_path)
+    # saver.restore(sess, FLAGS.output_path)
     # for i in range(FLAGS.max_steps):
     #     _, acc = sess.run([merged, accuracy], feed_dict=feed_dict(False))
     #     print('Accuracy at step %s: %s' % (i, acc))
@@ -143,7 +144,7 @@ def train():
             # Record summaries and test-set accuracy
             summary, acc = sess.run([merged, accuracy], feed_dict=feed_dict(False))
             test_writer.add_summary(summary, i)
-            print('Accuracy at step %s: %s' % (i, acc))
+            print(json.dumps({'step': i, 'accuracy': acc.item()}))
         else:
             # Record train set summaries, and train
             if i % 100 == 99:
@@ -163,7 +164,7 @@ def train():
                 train_writer.add_summary(summary, i)
 
     _, acc = sess.run([merged, accuracy], feed_dict=feed_dict(False))
-    print('Final accuracy %s' % acc)
+    print(json.dumps({'final_accuracy': acc.item()}))
 
     if len(FLAGS.output_path) > 0:
         saver.save(sess, FLAGS.output_path)
