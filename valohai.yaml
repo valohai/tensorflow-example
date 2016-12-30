@@ -2,7 +2,7 @@
 
 - step:
     name: run training
-    command: python /tmp/code/my_mnist.py
+    command: python -u /tmp/code/my_mnist.py
     inputs:
       - name: mnist
         urls:
