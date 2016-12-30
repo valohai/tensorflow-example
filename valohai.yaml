@@ -4,9 +4,11 @@
     name: run training
     command: python -u /tmp/code/my_mnist.py
     inputs:
-      - name: mnist
-        urls:
-          - http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
-          - http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
-          - http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
-          - http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+      - name: training-set-images
+        default_url: http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
+      - name: training-set-labels
+        default_url: http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
+      - name: test-set-images
+        default_url: http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
+      - name: test-set-labels
+        default_url: http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
