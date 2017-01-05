@@ -5,9 +5,12 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
-import sys
 import json
-import numpy as np
+import sys
+from os import getcwd
+from shutil import copy2
+
+#import numpy as np
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
@@ -16,7 +19,16 @@ FLAGS = None
 
 def train():
     # Import data
-    mnist = input_data.read_data_sets('/tmp/mnist', one_hot=True, fake_data=FLAGS.fake_data)
+    data_set_files = [
+        '/tmp/training-set-images/train-images-idx3-ubyte.gz',
+        '/tmp/training-set-labels/train-labels-idx1-ubyte.gz',
+        '/tmp/test-set-images/t10k-images-idx3-ubyte.gz',
+        '/tmp/test-set-labels/t10k-labels-idx1-ubyte.gz',
+    ]
+    train_dir = getcwd()
+    for file in data_set_files:
+        copy2(file, train_dir)
+    mnist = input_data.read_data_sets(train_dir, one_hot=True, fake_data=FLAGS.fake_data)
 
     sess = tf.InteractiveSession()
 
