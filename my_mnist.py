@@ -6,11 +6,11 @@ from __future__ import print_function
 
 import argparse
 import json
+import os
 import sys
-from os import getcwd
 from shutil import copy2
 
-#import numpy as np
+import numpy as np
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
@@ -25,7 +25,7 @@ def train():
         '/tmp/test-set-images/t10k-images-idx3-ubyte.gz',
         '/tmp/test-set-labels/t10k-labels-idx1-ubyte.gz',
     ]
-    train_dir = getcwd()
+    train_dir = os.getcwd()
     for file in data_set_files:
         copy2(file, train_dir)
     mnist = input_data.read_data_sets(train_dir, one_hot=True, fake_data=FLAGS.fake_data)
@@ -185,13 +185,13 @@ def train():
     test_writer.close()
 
     # Saving weights and biases to files.
-    # for i, ws in enumerate(all_weights):
-    #     filename = 'weights-{}.csv'.format(i)
-    #     np.savetxt(filename, ws.eval(), delimiter=",")
+    for i, ws in enumerate(all_weights):
+        filename = os.path.join('/tmp/out/', 'weights-{}.csv'.format(i))
+        np.savetxt(filename, ws.eval(), delimiter=",")
 
-    # for i, bs in enumerate(all_biases):
-    #     filename = 'biases-{}.csv'.format(i)
-    #     np.savetxt(filename, bs.eval(), delimiter=",")
+    for i, bs in enumerate(all_biases):
+        filename = os.path.join('/tmp/out/', 'biases-{}.csv'.format(i))
+        np.savetxt(filename, bs.eval(), delimiter=",")
 
 
 def main(_):
