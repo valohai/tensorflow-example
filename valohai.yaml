@@ -2,6 +2,7 @@
 
 - step:
     name: run training
+    image: gcr.io/tensorflow/tensorflow
     command: python -u /tmp/code/my_mnist.py
     inputs:
       - name: training-set-images
@@ -12,3 +13,14 @@
         default_url: http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
       - name: test-set-labels
         default_url: http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+    outputs:
+      - name: layer-0
+        files:
+          - biases-0.csv
+          - weights-0.csv
+      - name: layer-1-biases
+        files:
+          - layer-1/biases-1.csv
+      - name: layer-1-weights
+        files:
+          - layer-1/weights-1.csv
