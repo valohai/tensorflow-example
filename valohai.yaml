@@ -6,13 +6,13 @@
     command: python -u /tmp/code/my_mnist.py
     inputs:
       - name: training-set-images
-        default_url: http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
+        default: http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
       - name: training-set-labels
-        default_url: http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
+        default: http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
       - name: test-set-images
-        default_url: http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
+        default: http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
       - name: test-set-labels
-        default_url: http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+        default: http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
     outputs:
       - name: layer-0
         files:
