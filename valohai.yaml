@@ -3,7 +3,7 @@
 - step:
     name: run training
     image: gcr.io/tensorflow/tensorflow
-    command: python -u /tmp/code/my_mnist.py
+    command: python -u /tmp/code/my_mnist.py {parameters}
     inputs:
       - name: training-set-images
         default: http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
@@ -24,3 +24,19 @@
       - name: layer-1-weights
         files:
           - layer-1/weights-1.csv
+    parameters:
+      - name: max_steps
+        pass-as: --max_steps={v}
+        description: Number of steps to run trainer
+        type: integer
+        default: 300
+      - name: learning_rate
+        pass-as: --learning_rate={v}
+        description: Initial learning rate
+        type: float
+        default: 0.001
+      - name: dropout
+        pass-as: --dropout={v}
+        description: Keep probability for training dropout
+        type: float
+        default: 0.9
