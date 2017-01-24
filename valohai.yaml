@@ -13,6 +13,8 @@
         default: http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
       - name: test-set-labels
         default: http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+      - name: extra-data
+        optional: true
     outputs:
       - name: layer-0
         files:
