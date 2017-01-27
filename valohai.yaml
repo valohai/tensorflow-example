@@ -42,3 +42,7 @@
         description: Keep probability for training dropout
         type: float
         default: 0.9
+      - name: extra_param
+        type: string
+        default: parametron
+        optional: true
