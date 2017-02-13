@@ -6,13 +6,13 @@
     command: python -u /tmp/code/my_mnist.py {parameters}
     inputs:
       - name: training-set-images
-        default: http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
+        default: https://valohai-mnist.s3.amazonaws.com/train-images-idx3-ubyte.gz
       - name: training-set-labels
-        default: http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
+        default: https://valohai-mnist.s3.amazonaws.com/train-labels-idx1-ubyte.gz
       - name: test-set-images
-        default: http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
+        default: https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz
       - name: test-set-labels
-        default: http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+        default: https://valohai-mnist.s3.amazonaws.com/t10k-labels-idx1-ubyte.gz
     outputs:
       - name: layer-0
         files:
@@ -50,13 +50,13 @@
       - echo END
     inputs:
       - name: training-set-images
-        default: http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
+        default: https://valohai-mnist.s3.amazonaws.com/train-images-idx3-ubyte.gz
       - name: training-set-labels
-        default: http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
+        default: https://valohai-mnist.s3.amazonaws.com/train-labels-idx1-ubyte.gz
       - name: test-set-images
-        default: http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
+        default: https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz
       - name: test-set-labels
-        default: http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+        default: https://valohai-mnist.s3.amazonaws.com/t10k-labels-idx1-ubyte.gz
       - name: extra-data
         optional: true
     outputs:
