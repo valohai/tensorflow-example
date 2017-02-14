@@ -2,7 +2,7 @@
 
 - step:
     name: run training
-    image: gcr.io/tensorflow/tensorflow
+    image: gcr.io/tensorflow/tensorflow:0.12.1-devel-gpu
     command: python -u /tmp/code/my_mnist.py {parameters}
     inputs:
       - name: training-set-images
@@ -43,7 +43,7 @@
 
 - step:
     name: string param training
-    image: gcr.io/tensorflow/tensorflow
+    image: gcr.io/tensorflow/tensorflow:0.12.1-devel-gpu
     command:
       - echo START
       - python -u /tmp/code/my_mnist.py {parameters}
@@ -84,7 +84,7 @@
 
 - step:
     name: totally different
-    image: gcr.io/tensorflow/tensorflow
+    image: gcr.io/tensorflow/tensorflow:0.12.1-devel-gpu
     command:
       - ls -halt
       - nvidia-smi
