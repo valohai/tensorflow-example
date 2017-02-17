@@ -1,7 +1,7 @@
 ---
 
 - step:
-    name: run training
+    name: model training
     image: gcr.io/tensorflow/tensorflow:0.12.1-devel-gpu
     command: python -u /tmp/code/my_mnist.py {parameters}
     inputs:
@@ -13,23 +13,7 @@
         default: https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz
       - name: test-set-labels
         default: https://valohai-mnist.s3.amazonaws.com/t10k-labels-idx1-ubyte.gz
-    outputs:
-      - name: layer-0
-        files:
-          - biases-0.csv
-          - weights-0.csv
-      - name: layer-1-biases
-        files:
-          - layer-1/biases-1.csv
-      - name: layer-1-weights
-        files:
-          - layer-1/weights-1.csv
     parameters:
-      - name: max_steps
-        pass-as: --max_steps={v}
-        description: Number of steps to run trainer
-        type: integer
-        default: 300
       - name: learning_rate
         pass-as: --learning_rate={v}
         description: Initial learning rate
@@ -40,51 +24,17 @@
         description: Keep probability for training dropout
         type: float
         default: 0.9
-
-- step:
-    name: string param training
-    image: gcr.io/tensorflow/tensorflow:0.12.1-devel-gpu
-    command:
-      - echo START
-      - python -u /tmp/code/my_mnist.py {parameters}
-      - echo END
-    inputs:
-      - name: training-set-images
-        default: https://valohai-mnist.s3.amazonaws.com/train-images-idx3-ubyte.gz
-      - name: training-set-labels
-        default: https://valohai-mnist.s3.amazonaws.com/train-labels-idx1-ubyte.gz
-      - name: test-set-images
-        default: https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz
-      - name: test-set-labels
-        default: https://valohai-mnist.s3.amazonaws.com/t10k-labels-idx1-ubyte.gz
-      - name: extra-data
-        optional: true
-    outputs:
-      - name: layer-0
-        files:
-          - biases-0.csv
-          - weights-0.csv
-      - name: layer-1-biases
-        files:
-          - layer-1/biases-1.csv
-      - name: layer-1-weights
-        files:
-          - layer-1/weights-1.csv
-    parameters:
-      - name: extra_param
-        type: string
-        default: parametron
-        description: This is just showing how string parameters work.
-        optional: true
       - name: max_steps
         pass-as: --max_steps={v}
-        description: Number of steps to run trainer
+        description: Number of steps to run the trainer
         type: integer
-        default: 100
+        default: 300
 
 - step:
-    name: totally different
+    name: environment check
     image: gcr.io/tensorflow/tensorflow:0.12.1-devel-gpu
     command:
-      - ls -halt
+      - pwd
+      - ls -la
       - nvidia-smi
+      - python --version
