@@ -1,9 +1,9 @@
 ---
 
 - step:
-    name: model training
+    name: Train model
     image: gcr.io/tensorflow/tensorflow:0.12.1-devel-gpu
-    command: python -u /tmp/code/my_mnist.py {parameters}
+    command: python train.py {parameters}
     inputs:
       - name: training-set-images
         default: https://valohai-mnist.s3.amazonaws.com/train-images-idx3-ubyte.gz
@@ -14,6 +14,11 @@
       - name: test-set-labels
         default: https://valohai-mnist.s3.amazonaws.com/t10k-labels-idx1-ubyte.gz
     parameters:
+      - name: max_steps
+        pass-as: --max_steps={v}
+        description: Number of steps to run the trainer
+        type: integer
+        default: 300
       - name: learning_rate
         pass-as: --learning_rate={v}
         description: Initial learning rate
@@ -24,14 +29,9 @@
         description: Keep probability for training dropout
         type: float
         default: 0.9
-      - name: max_steps
-        pass-as: --max_steps={v}
-        description: Number of steps to run the trainer
-        type: integer
-        default: 300
 
 - step:
-    name: environment check
+    name: Worker environment check
     image: gcr.io/tensorflow/tensorflow:0.12.1-devel-gpu
     command:
       - pwd

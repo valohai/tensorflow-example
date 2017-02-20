@@ -1,4 +1,5 @@
-# Original: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/mnist/mnist_with_summaries.py
+# Original: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/mnist
+# /mnist_with_summaries.py
 
 from __future__ import absolute_import
 from __future__ import division
@@ -18,12 +19,13 @@ FLAGS = None
 
 
 def train():
-    # Import data
+    # Import input data
+    inputs_dir = os.getenv('VH_INPUTS_DIR', '/tmp/tensorflow/mnist/inputs')
     data_set_files = [
-        '/tmp/training-set-images/train-images-idx3-ubyte.gz',
-        '/tmp/training-set-labels/train-labels-idx1-ubyte.gz',
-        '/tmp/test-set-images/t10k-images-idx3-ubyte.gz',
-        '/tmp/test-set-labels/t10k-labels-idx1-ubyte.gz',
+        os.path.join(inputs_dir, 'training-set-images/train-images-idx3-ubyte.gz'),
+        os.path.join(inputs_dir, 'training-set-labels/train-labels-idx1-ubyte.gz'),
+        os.path.join(inputs_dir, 'test-set-images/t10k-images-idx3-ubyte.gz'),
+        os.path.join(inputs_dir, 'test-set-labels/t10k-labels-idx1-ubyte.gz'),
     ]
     train_dir = os.getcwd()
     for file in data_set_files:
@@ -143,13 +145,6 @@ def train():
             k = 1.0
         return {x: xs, y_: ys, keep_prob: k}
 
-    saver = tf.train.Saver()
-
-    # saver.restore(sess, FLAGS.output_path)
-    # for i in range(FLAGS.max_steps):
-    #     _, acc = sess.run([merged, accuracy], feed_dict=feed_dict(False))
-    #     print('Accuracy at step %s: %s' % (i, acc))
-
     for i in range(FLAGS.max_steps):
 
         if i % 10 == 0:
@@ -178,19 +173,16 @@ def train():
     _, acc = sess.run([merged, accuracy], feed_dict=feed_dict(False))
     print(json.dumps({'final_accuracy': acc.item()}))
 
-    if len(FLAGS.output_path) > 0:
-        saver.save(sess, FLAGS.output_path)
-
     train_writer.close()
     test_writer.close()
 
-    # Saving weights and biases to files.
+    # Saving weights and biases as outputs of the task.
+    outputs_dir = os.getenv('VH_OUTPUTS_DIR', '/tmp/tensorflow/mnist/outputs')
     for i, ws in enumerate(all_weights):
-        filename = os.path.join('/tmp/out/', 'weights-{}.csv'.format(i))
+        filename = os.path.join(outputs_dir, 'layer-{}-weights.csv'.format(i))
         np.savetxt(filename, ws.eval(), delimiter=",")
-
     for i, bs in enumerate(all_biases):
-        filename = os.path.join('/tmp/out/', 'biases-{}.csv'.format(i))
+        filename = os.path.join(outputs_dir, 'layer-{}-biases.csv'.format(i))
         np.savetxt(filename, bs.eval(), delimiter=",")
 
 
@@ -203,19 +195,15 @@ def main(_):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--fake_data', nargs='?', const=True, type=bool, default=False,
-                        help='If true, uses fake data for unit testing.')
     parser.add_argument('--max_steps', type=int, default=300,
-                        help='Number of steps to run trainer.')
+                        help='Number of steps to run trainer')
     parser.add_argument('--learning_rate', type=float, default=0.001,
                         help='Initial learning rate')
     parser.add_argument('--dropout', type=float, default=0.9,
-                        help='Keep probability for training dropout.')
-    parser.add_argument('--data_dir', type=str, default='/tmp/tensorflow/mnist/input_data',
-                        help='Directory for storing input data')
+                        help='Keep probability for training dropout')
+    parser.add_argument('--fake_data', type=bool, nargs='?', const=True, default=False,
+                        help='If true, uses fake data for unit testing')
     parser.add_argument('--log_dir', type=str, default='/tmp/tensorflow/mnist/logs/mnist_with_summaries',
                         help='Summaries log directory')
-    parser.add_argument('--output_path', type=str, default='',
-                        help='Directory for storing input data')
     FLAGS, unparsed = parser.parse_known_args()
     tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
