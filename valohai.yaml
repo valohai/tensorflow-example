@@ -2,7 +2,7 @@
 
 - step:
     name: Train model
-    image: gcr.io/tensorflow/tensorflow:0.12.1-devel-gpu
+    image: gcr.io/tensorflow/tensorflow:1.3.0-devel-gpu
     command: python train.py {parameters}
     inputs:
       - name: training-set-images
@@ -32,7 +32,7 @@
 
 - step:
     name: Worker environment check
-    image: gcr.io/tensorflow/tensorflow:0.12.1-devel-gpu
+    image: gcr.io/tensorflow/tensorflow:1.3.0-devel-gpu
     command:
       - pwd
       - ls -la
