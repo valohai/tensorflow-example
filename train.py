@@ -1,5 +1,5 @@
-# Original: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/mnist
-# /mnist_with_summaries.py
+# Original:
+# https://github.com/tensorflow/tensorflow/blob/master/tensorflow/examples/tutorials/mnist/mnist_with_summaries.py
 
 from __future__ import absolute_import
 from __future__ import division
@@ -106,7 +106,7 @@ def train():
     y = nn_layer(dropped, 500, 10, 'layer2', act=tf.identity)
 
     with tf.name_scope('cross_entropy'):
-        diff = tf.nn.softmax_cross_entropy_with_logits(y, y_)
+        diff = tf.nn.softmax_cross_entropy_with_logits(logits=y, labels=y_)
         with tf.name_scope('total'):
             cross_entropy = tf.reduce_mean(diff)
 
@@ -125,7 +125,8 @@ def train():
 
     tf.summary.scalar('accuracy', accuracy)
 
-    # Merge all the summaries and write them out to /tmp/mnist_logs (by default)
+    # Merge all the summaries and write them out to
+    # /tmp/tensorflow/mnist/logs/mnist_with_summaries (by default)
     merged = tf.summary.merge_all()
     train_writer = tf.summary.FileWriter(FLAGS.log_dir + '/train', sess.graph)
     test_writer = tf.summary.FileWriter(FLAGS.log_dir + '/test')
@@ -171,7 +172,7 @@ def train():
                 train_writer.add_summary(summary, i)
 
     _, acc = sess.run([merged, accuracy], feed_dict=feed_dict(False))
-    print(json.dumps({'final_accuracy': acc.item()}))
+    print(json.dumps({'step': FLAGS.max_steps, 'accuracy': acc.item()}))
 
     train_writer.close()
     test_writer.close()
