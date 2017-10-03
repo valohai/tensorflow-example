@@ -172,7 +172,7 @@ def train():
                 train_writer.add_summary(summary, i)
 
     _, acc = sess.run([merged, accuracy], feed_dict=feed_dict(False))
-    print(json.dumps({'final_accuracy': acc.item()}))
+    print(json.dumps({'step': FLAGS.max_steps, 'accuracy': acc.item()}))
 
     train_writer.close()
     test_writer.close()
