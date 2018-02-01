@@ -2,17 +2,8 @@
 
 - step:
     name: Train model
-    image: gcr.io/tensorflow/tensorflow:1.3.0-devel-gpu
+    image: gcr.io/tensorflow/tensorflow:1.5.0-devel-gpu
     command: python train.py {parameters}
-    inputs:
-      - name: training-set-images
-        default: https://valohai-mnist.s3.amazonaws.com/train-images-idx3-ubyte.gz
-      - name: training-set-labels
-        default: https://valohai-mnist.s3.amazonaws.com/train-labels-idx1-ubyte.gz
-      - name: test-set-images
-        default: https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz
-      - name: test-set-labels
-        default: https://valohai-mnist.s3.amazonaws.com/t10k-labels-idx1-ubyte.gz
     parameters:
       - name: max_steps
         pass-as: --max_steps={v}
@@ -29,12 +20,23 @@
         description: Keep probability for training dropout
         type: float
         default: 0.9
+    inputs:
+      - name: training-set-images
+        default: https://valohai-mnist.s3.amazonaws.com/train-images-idx3-ubyte.gz
+      - name: training-set-labels
+        default: https://valohai-mnist.s3.amazonaws.com/train-labels-idx1-ubyte.gz
+      - name: test-set-images
+        default: https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz
+      - name: test-set-labels
+        default: https://valohai-mnist.s3.amazonaws.com/t10k-labels-idx1-ubyte.gz
 
 - step:
     name: Worker environment check
-    image: gcr.io/tensorflow/tensorflow:1.3.0-devel-gpu
+    image: gcr.io/tensorflow/tensorflow:1.5.0-devel-gpu
     command:
       - pwd
       - ls -la
       - nvidia-smi
       - python --version
+      - nvcc --version | grep release
+      - cat /usr/include/x86_64-linux-gnu/cudnn_v*.h | grep CUDNN_MAJOR -A 2

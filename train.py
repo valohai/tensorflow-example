@@ -30,7 +30,7 @@ def train():
     train_dir = os.getcwd()
     for file in data_set_files:
         copy2(file, train_dir)
-    mnist = input_data.read_data_sets(train_dir, one_hot=True, fake_data=FLAGS.fake_data)
+    mnist = input_data.read_data_sets(train_dir, fake_data=FLAGS.fake_data)
 
     sess = tf.InteractiveSession()
 
@@ -39,7 +39,7 @@ def train():
     # Input placeholders
     with tf.name_scope('input'):
         x = tf.placeholder(tf.float32, [None, 784], name='x-input')
-        y_ = tf.placeholder(tf.float32, [None, 10], name='y-input')
+        y_ = tf.placeholder(tf.int64, [None], name='y-input')
 
     with tf.name_scope('input_reshape'):
         image_shaped_input = tf.reshape(x, [-1, 28, 28, 1])
@@ -106,9 +106,8 @@ def train():
     y = nn_layer(dropped, 500, 10, 'layer2', act=tf.identity)
 
     with tf.name_scope('cross_entropy'):
-        diff = tf.nn.softmax_cross_entropy_with_logits(logits=y, labels=y_)
         with tf.name_scope('total'):
-            cross_entropy = tf.reduce_mean(diff)
+            cross_entropy = tf.losses.sparse_softmax_cross_entropy(labels=y_, logits=y)
 
     tf.summary.scalar('cross_entropy', cross_entropy)
 
@@ -119,7 +118,7 @@ def train():
 
     with tf.name_scope('accuracy'):
         with tf.name_scope('correct_prediction'):
-            correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
+            correct_prediction = tf.equal(tf.argmax(y, 1), y_)
         with tf.name_scope('accuracy'):
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
