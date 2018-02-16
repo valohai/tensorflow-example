@@ -10,22 +10,23 @@ import json
 import os
 import sys
 from shutil import copy2
-
 import numpy as np
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
+
+from utils import get_first_file
 
 FLAGS = None
 
 
 def train():
     # Import input data
-    inputs_dir = os.getenv('VH_INPUTS_DIR', '/tmp/tensorflow/mnist/inputs')
+    INPUTS_DIR = os.getenv('VH_INPUTS_DIR', '/tmp/tensorflow/mnist/inputs')
     data_set_files = [
-        os.path.join(inputs_dir, 'training-set-images/train-images-idx3-ubyte.gz'),
-        os.path.join(inputs_dir, 'training-set-labels/train-labels-idx1-ubyte.gz'),
-        os.path.join(inputs_dir, 'test-set-images/t10k-images-idx3-ubyte.gz'),
-        os.path.join(inputs_dir, 'test-set-labels/t10k-labels-idx1-ubyte.gz'),
+        get_first_file(os.path.join(INPUTS_DIR, 'training-set-images')),
+        get_first_file(os.path.join(INPUTS_DIR, 'training-set-labels')),
+        get_first_file(os.path.join(INPUTS_DIR, 'test-set-images')),
+        get_first_file(os.path.join(INPUTS_DIR, 'test-set-labels')),
     ]
     train_dir = os.getcwd()
     for file in data_set_files:
