@@ -54,3 +54,20 @@
       - python --version
       - nvcc --version | grep release
       - cat /usr/include/x86_64-linux-gnu/cudnn_v*.h | grep CUDNN_MAJOR -A 2
+
+- endpoint:
+    name: greet
+    image: python:3.6
+    port: 8000
+    server-command: python -m wsgiref.simple_server
+    description: test the serving environment
+
+- endpoint:
+    name: predict-digit
+    description: predict digits from image inputs ("file" parameter)
+    image: gcr.io/tensorflow/tensorflow:1.5.0
+    wsgi: predict_wsgi:predict_wsgi
+    files:
+      - name: model
+        description: Model output file from TensorFlow
+        path: model.pb
