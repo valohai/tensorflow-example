@@ -1,1 +1,5 @@
+*.gz
+*.pb
+*.py[cod]
 .idea/
+valohai-local-outputs

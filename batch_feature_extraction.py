@@ -1,11 +1,12 @@
 # Based on:
 # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/learn/python/learn/datasets/mnist.py
 
-import os
 import gzip
+import os
+
 import numpy as np
 
-from utils import get_first_file
+from tf_mnist.utils import get_first_file
 
 
 def _load_images(file):
