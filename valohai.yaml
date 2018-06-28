@@ -34,6 +34,11 @@
         description: Keep probability for training dropout
         type: float
         default: 0.9
+      - name: batch_size
+        pass-as: --batch-size={v}
+        description: Training batch size (larger batches are usually more efficient on GPUs)
+        type: integer
+        default: 200
     inputs:
       - name: training-set-images
         default: https://valohai-mnist.s3.amazonaws.com/train-images-idx3-ubyte.gz

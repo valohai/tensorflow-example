@@ -70,7 +70,7 @@ def train(flags, sess, model, mnist):
     def feed_dict(train):
         """Make a TensorFlow feed_dict: maps data onto Tensor placeholders."""
         if train or flags.fake_data:
-            xs, ys = mnist.train.next_batch(100, fake_data=flags.fake_data)
+            xs, ys = mnist.train.next_batch(batch_size=flags.batch_size, fake_data=flags.fake_data)
             k = flags.dropout
         else:
             xs, ys = mnist.test.images, mnist.test.labels
