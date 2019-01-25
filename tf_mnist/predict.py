@@ -18,11 +18,11 @@ class Predictor:
     input_layer_name = 'input/x-input:0'
     output_layer_name = 'output:0'
 
-    def __init__(self):
+    def __init__(self, model_filename='model.pb'):
         self.sess = tf.Session()
         self.labels = list(range(10))
         with self.sess:
-            load_graph('model.pb')
+            load_graph(model_filename)
         self.output_tensor = self.sess.graph.get_tensor_by_name(self.output_layer_name)
         self.dropout = self.sess.graph.get_tensor_by_name('dropout/Placeholder:0')
 
@@ -49,17 +49,18 @@ class Predictor:
             image_data /= max_value
         return image_data, inverted
 
-    def predict_digit(self, img):
+    def predict_digit(self, img, digits=6):
         """
         Predict the digit from the given image using a pre-trained network.
         :param img: PIL image of a handwritten digit.
+        :param digits: decimal points for prediction rounding
         :return: Dictionary describing the prediction
         :rtype: dict
         """
         image_data, inverted = self._process_image(img)
         predictions, = self.sess.run(self.output_tensor, {self.input_layer_name: image_data, self.dropout: 1})
         prediction_output = dict([
-            (self.labels[top_pred_node_id], float(predictions[top_pred_node_id]))
+            (self.labels[top_pred_node_id], round(float(predictions[top_pred_node_id]), digits))
             for top_pred_node_id
             in predictions.argsort()[::-1]
         ])
