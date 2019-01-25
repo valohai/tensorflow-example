@@ -2,4 +2,6 @@
 *.pb
 *.py[cod]
 .idea/
+output.csv
+output.json
 valohai-local-outputs
