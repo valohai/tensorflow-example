@@ -1,3 +1,5 @@
+## NOTE THAT THIS BRANCH REQUIRES YOU TO SETUP A SPECIFIC SWIFT STORE TO WORK.
+
 # Valohai TensorFlow Examples
 
 This repository implements handwritten digit detection using
