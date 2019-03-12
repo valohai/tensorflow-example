@@ -18,6 +18,13 @@ from utils import get_first_file
 
 FLAGS = None
 
+def create_log_snapshot(file_writer):
+    file_writer.close()
+    # Set all files as read-only to inform Valohai they are done
+    for subdir, dirs, files in os.walk(file_writer.get_logdir()):
+        for f in files:
+            os.chmod(subdir + os.sep + f, 292)
+    file_writer.reopen()
 
 def train():
     # Import input data
@@ -165,6 +172,9 @@ def train():
                                       run_metadata=run_metadata)
                 train_writer.add_run_metadata(run_metadata, 'step%03d' % i)
                 train_writer.add_summary(summary, i)
+
+                create_log_snapshot(train_writer)
+
                 print('Adding run metadata for', i)
             else:
                 # Record a summary
@@ -204,7 +214,7 @@ if __name__ == '__main__':
                         help='Keep probability for training dropout')
     parser.add_argument('--fake_data', type=bool, nargs='?', const=True, default=False,
                         help='If true, uses fake data for unit testing')
-    parser.add_argument('--log_dir', type=str, default='/tmp/tensorflow/mnist/logs/mnist_with_summaries',
+    parser.add_argument('--log_dir', type=str, default='/valohai/outputs/logs',
                         help='Summaries log directory')
     FLAGS, unparsed = parser.parse_known_args()
     tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)

@@ -15,8 +15,8 @@
         default: https://valohai-mnist.s3.amazonaws.com/t10k-labels-idx1-ubyte.gz
 
 - step:
-    name: Train model
-    image: tensorflow/tensorflow:1.5.0-devel-gpu
+    name: train
+    image: tensorflow/tensorflow:1.5.0-devel
     command: python train.py {parameters}
     parameters:
       - name: max_steps
@@ -34,6 +34,10 @@
         description: Keep probability for training dropout
         type: float
         default: 0.9
+      - name: log-dir
+        pass-as: --log_dir={v}
+        type: string
+        default: /valohai/outputs/logs
     inputs:
       - name: training-set-images
         default: https://valohai-mnist.s3.amazonaws.com/train-images-idx3-ubyte.gz
@@ -54,3 +58,9 @@
       - python --version
       - nvcc --version | grep release
       - cat /usr/include/x86_64-linux-gnu/cudnn_v*.h | grep CUDNN_MAJOR -A 2
+
+- step:
+    name: test
+    image: tensorflow/tensorflow:1.5.0-devel
+    command:
+      - python t.py {parameters}
