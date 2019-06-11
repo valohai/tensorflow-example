@@ -4,7 +4,7 @@
     name: Preprocess dataset
     image: tensorflow/tensorflow:1.5.0-devel-gpu
     command:
-      - python batch_feature_extraction.py
+      - python preprocess.py
     inputs:
       - name: training-set-images
         default: https://valohaidemo.blob.core.windows.net/mnist/train-images-idx3-ubyte.gz
@@ -57,7 +57,7 @@
     image: tensorflow/tensorflow:1.5.0-devel-py3
     command:
       - pip install --disable-pip-version-check --quiet -r requirements.txt
-      - python3 batch_infer.py --model-pb=/valohai/inputs/model/model.pb --input-root=/valohai/inputs/images
+      - python batch_inference.py --model-pb=/valohai/inputs/model/model.pb --input-root=/valohai/inputs/images
     inputs:
       - name: model
       - name: images
