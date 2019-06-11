@@ -6,16 +6,20 @@ from __future__ import absolute_import, division, print_function
 import argparse
 
 import tensorflow as tf
+from tensorflow.python.util import deprecation
 
 from tf_mnist.model import make_model
-from tf_mnist.training import read_input, train
+from tf_mnist.training import read_inputs, train
 
 
 def main(flags):
-    sess = tf.InteractiveSession()
-    mnist = read_input(flags)
-    model = make_model(learning_rate=flags.learning_rate)
-    train(flags, sess, model, mnist)
+    # We silence the deprecation warnings as TF repository doesn't have
+    # updated MNIST example available. Remove this when they update them.
+    with deprecation.silence():
+        sess = tf.InteractiveSession()
+        mnist = read_inputs(flags)
+        model = make_model(learning_rate=flags.learning_rate)
+        train(flags, sess, model, mnist)
 
 
 def parse_args():
