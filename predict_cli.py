@@ -12,3 +12,4 @@ if __name__ == '__main__':
     for filename in args.files:
         img = Image.open(filename)
         print(filename, predictor.predict_digit(img))
+    predictor.close()

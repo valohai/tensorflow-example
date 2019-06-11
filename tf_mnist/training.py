@@ -11,24 +11,25 @@ from tensorflow.examples.tutorials.mnist import input_data
 from tf_mnist.utils import get_first_file
 
 
-def read_input(flags):
-    # Import input data
-    inputs_dir = os.getenv('VH_INPUTS_DIR', '/tmp/tensorflow/mnist/inputs')
-    data_set_files = [
-        get_first_file(os.path.join(inputs_dir, 'training-set-images')),
-        get_first_file(os.path.join(inputs_dir, 'training-set-labels')),
-        get_first_file(os.path.join(inputs_dir, 'test-set-images')),
-        get_first_file(os.path.join(inputs_dir, 'test-set-labels')),
-    ]
+def read_inputs(flags):
+    inputs_dir = os.getenv('VH_INPUTS_DIR', './inputs')
+    data_set_files = {
+        'train-images-idx3-ubyte.gz': get_first_file(os.path.join(inputs_dir, 'training-set-images')),
+        'train-labels-idx1-ubyte.gz': get_first_file(os.path.join(inputs_dir, 'training-set-labels')),
+        't10k-images-idx3-ubyte.gz': get_first_file(os.path.join(inputs_dir, 'test-set-images')),
+        't10k-labels-idx1-ubyte.gz': get_first_file(os.path.join(inputs_dir, 'test-set-labels')),
+    }
     train_dir = os.getcwd()
-    for file in data_set_files:
-        copy2(file, train_dir)
+    for filename, src_path in data_set_files.items():
+        dst_path = os.path.join(train_dir, filename)
+        copy2(src_path, dst_path)
+
     return input_data.read_data_sets(train_dir, fake_data=flags.fake_data)
 
 
 def save_output(sess, all_weights, all_biases):
     # Saving weights and biases as outputs of the task.
-    outputs_dir = os.getenv('VH_OUTPUTS_DIR', '/tmp/tensorflow/mnist/outputs')
+    outputs_dir = os.getenv('VH_OUTPUTS_DIR', './outputs')
 
     if not os.path.isdir(outputs_dir):
         os.makedirs(outputs_dir)

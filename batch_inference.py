@@ -34,8 +34,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--model-pb', required=True)
     ap.add_argument('--input-root', required=True)
-    ap.add_argument('--output-csv', default=os.path.join(os.environ.get('VH_OUTPUTS_DIR', '.'), 'output.csv'))
-    ap.add_argument('--output-json', default=os.path.join(os.environ.get('VH_OUTPUTS_DIR', '.'), 'output.json'))
+    ap.add_argument('--output-csv', default=os.path.join(os.environ.get('VH_OUTPUTS_DIR', '.'), 'predictions.csv'))
+    ap.add_argument('--output-json', default=os.path.join(os.environ.get('VH_OUTPUTS_DIR', '.'), 'predictions.json'))
     args = ap.parse_args()
     predictor = Predictor(model_filename=args.model_pb)
     json_blob = {}
@@ -71,6 +71,9 @@ def main():
                 ])
                 json_blob[relname] = {'error': exc}
                 print('Unable to process %s: %s' % (relname, exc), file=sys.stderr)
+
+    predictor.close()
+
     with open(args.output_json, 'w', newline='') as jsonout:
         json.dump(json_blob, jsonout, sort_keys=True)
 

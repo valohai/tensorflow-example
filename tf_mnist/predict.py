@@ -7,7 +7,7 @@ from tf_mnist.model import IMAGE_SIZE, IMAGE_SIZE_SQUARED
 
 def load_graph(filename):
     """Unpersists graph from file as default graph."""
-    with tf.gfile.FastGFile(filename, 'rb') as f:
+    with tf.gfile.GFile(filename, 'rb') as f:
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
         tf.import_graph_def(graph_def, name='')
@@ -21,8 +21,7 @@ class Predictor:
     def __init__(self, model_filename='model.pb'):
         self.sess = tf.Session()
         self.labels = list(range(10))
-        with self.sess:
-            load_graph(model_filename)
+        load_graph(model_filename)
         self.output_tensor = self.sess.graph.get_tensor_by_name(self.output_layer_name)
         self.dropout = self.sess.graph.get_tensor_by_name('dropout/Placeholder:0')
 
@@ -71,3 +70,7 @@ class Predictor:
             'predictions': prediction_output,
             'inverted': inverted,
         }
+
+    def close(self):
+        if self.sess:
+            self.sess.close()
