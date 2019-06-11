@@ -1,9 +1,10 @@
 ---
 
 - step:
-    name: Batch feature extraction
+    name: Preprocess dataset
     image: tensorflow/tensorflow:1.5.0-devel-gpu
-    command: python batch_feature_extraction.py
+    command:
+      - python batch_feature_extraction.py
     inputs:
       - name: training-set-images
         default: https://valohaidemo.blob.core.windows.net/mnist/train-images-idx3-ubyte.gz
@@ -17,7 +18,8 @@
 - step:
     name: Train model
     image: tensorflow/tensorflow:1.5.0-devel-gpu
-    command: python train.py {parameters}
+    command:
+      - python train.py {parameters}
     parameters:
       - name: max_steps
         pass-as: --max_steps={v}
@@ -54,8 +56,8 @@
     # note: the inference step uses CPU only, and as such can be run on a GPU-free machine
     image: tensorflow/tensorflow:1.5.0-devel-py3
     command:
-    - pip install --disable-pip-version-check --quiet -r requirements.txt
-    - python3 batch_infer.py --model-pb=/valohai/inputs/model/model.pb --input-root=/valohai/inputs/images
+      - pip install --disable-pip-version-check --quiet -r requirements.txt
+      - python3 batch_infer.py --model-pb=/valohai/inputs/model/model.pb --input-root=/valohai/inputs/images
     inputs:
       - name: model
       - name: images
