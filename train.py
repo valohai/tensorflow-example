@@ -43,7 +43,7 @@ def parse_args():
         help='Keep probability for training dropout',
     )
     parser.add_argument(
-        '--batch-size',
+        '--batch_size',
         type=int,
         default=100,
         help='Training batch size (larger batches are usually more efficient on GPUs)',

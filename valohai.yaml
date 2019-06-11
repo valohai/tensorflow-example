@@ -37,7 +37,7 @@
         type: float
         default: 0.9
       - name: batch_size
-        pass-as: --batch-size={v}
+        pass-as: --batch_size={v}
         description: Training batch size (larger batches are usually more efficient on GPUs)
         type: integer
         default: 200
