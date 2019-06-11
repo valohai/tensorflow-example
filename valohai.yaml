@@ -2,7 +2,7 @@
 
 - step:
     name: Preprocess dataset
-    image: tensorflow/tensorflow:1.5.0-devel-gpu
+    image: tensorflow/tensorflow:1.13.1-gpu-py3
     command:
       - python preprocess.py
     inputs:
@@ -17,7 +17,7 @@
 
 - step:
     name: Train model
-    image: tensorflow/tensorflow:1.5.0-devel-gpu
+    image: tensorflow/tensorflow:1.13.1-gpu-py3
     command:
       - python train.py {parameters}
     parameters:
@@ -54,7 +54,7 @@
 - step:
     name: Batch inference
     environment: azure-westeurope-f2sv2
-    image: tensorflow/tensorflow:1.5.0-devel-py3
+    image: tensorflow/tensorflow:1.13.1-py3
     command:
       - pip install --disable-pip-version-check --quiet -r requirements.txt
       - python batch_inference.py --model-pb=/valohai/inputs/model/model.pb --input-root=/valohai/inputs/images
@@ -64,7 +64,7 @@
 
 - step:
     name: Worker environment check
-    image: tensorflow/tensorflow:1.5.0-devel-gpu
+    image: tensorflow/tensorflow:1.13.1-gpu-py3
     command:
       - pwd
       - ls -la
@@ -83,7 +83,7 @@
 - endpoint:
     name: predict-digit
     description: predict digits from image inputs ("file" parameter)
-    image: tensorflow/tensorflow:1.5.0
+    image: tensorflow/tensorflow:1.13.1-py3
     wsgi: predict_wsgi:predict_wsgi
     files:
       - name: model
