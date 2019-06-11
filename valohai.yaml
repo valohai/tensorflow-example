@@ -61,6 +61,10 @@
     inputs:
       - name: model
       - name: images
+        default:
+          - https://valohaidemo.blob.core.windows.net/mnist/four-inverted.png
+          - https://valohaidemo.blob.core.windows.net/mnist/five-inverted.png
+          - https://valohaidemo.blob.core.windows.net/mnist/five-normal.jpg
 
 - step:
     name: Worker environment check
