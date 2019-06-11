@@ -81,7 +81,7 @@
 - endpoint:
     name: predict-digit
     description: predict digits from image inputs ("file" parameter)
-    image: gcr.io/tensorflow/tensorflow:1.5.0
+    image: tensorflow/tensorflow:1.5.0
     wsgi: predict_wsgi:predict_wsgi
     files:
       - name: model
