@@ -1,7 +1,7 @@
 ---
 
 - step:
-    name: Preprocess dataset
+    name: Preprocess dataset (MNIST)
     image: tensorflow/tensorflow:1.13.1-gpu-py3
     command:
       - python preprocess.py
@@ -16,7 +16,7 @@
         default: https://valohaidemo.blob.core.windows.net/mnist/t10k-labels-idx1-ubyte.gz
 
 - step:
-    name: Train model
+    name: Train model (MNIST)
     image: tensorflow/tensorflow:1.13.1-gpu-py3
     command:
       - python train.py {parameters}
@@ -52,7 +52,7 @@
         default: https://valohaidemo.blob.core.windows.net/mnist/t10k-labels-idx1-ubyte.gz
 
 - step:
-    name: Batch inference
+    name: Batch inference (MNIST)
     environment: azure-westeurope-f2sv2
     image: tensorflow/tensorflow:1.13.1-py3
     command:
