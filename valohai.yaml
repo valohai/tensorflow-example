@@ -6,13 +6,13 @@
     command: python batch_feature_extraction.py
     inputs:
       - name: training-set-images
-        default: https://valohai-mnist.s3.amazonaws.com/train-images-idx3-ubyte.gz
+        default: https://valohaidemo.blob.core.windows.net/mnist/train-images-idx3-ubyte.gz
       - name: training-set-labels
-        default: https://valohai-mnist.s3.amazonaws.com/train-labels-idx1-ubyte.gz
+        default: https://valohaidemo.blob.core.windows.net/mnist/train-labels-idx1-ubyte.gz
       - name: test-set-images
-        default: https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz
+        default: https://valohaidemo.blob.core.windows.net/mnist/t10k-images-idx3-ubyte.gz
       - name: test-set-labels
-        default: https://valohai-mnist.s3.amazonaws.com/t10k-labels-idx1-ubyte.gz
+        default: https://valohaidemo.blob.core.windows.net/mnist/t10k-labels-idx1-ubyte.gz
 
 - step:
     name: Train model
@@ -41,13 +41,13 @@
         default: 200
     inputs:
       - name: training-set-images
-        default: https://valohai-mnist.s3.amazonaws.com/train-images-idx3-ubyte.gz
+        default: https://valohaidemo.blob.core.windows.net/mnist/train-images-idx3-ubyte.gz
       - name: training-set-labels
-        default: https://valohai-mnist.s3.amazonaws.com/train-labels-idx1-ubyte.gz
+        default: https://valohaidemo.blob.core.windows.net/mnist/train-labels-idx1-ubyte.gz
       - name: test-set-images
-        default: https://valohai-mnist.s3.amazonaws.com/t10k-images-idx3-ubyte.gz
+        default: https://valohaidemo.blob.core.windows.net/mnist/t10k-images-idx3-ubyte.gz
       - name: test-set-labels
-        default: https://valohai-mnist.s3.amazonaws.com/t10k-labels-idx1-ubyte.gz
+        default: https://valohaidemo.blob.core.windows.net/mnist/t10k-labels-idx1-ubyte.gz
 
 - step:
     name: Batch inference
