@@ -3,8 +3,7 @@
 - step:
     name: Preprocess dataset (MNIST)
     image: tensorflow/tensorflow:1.13.1-gpu-py3
-    command:
-      - python preprocess.py
+    command: python preprocess.py
     inputs:
       - name: training-set-images
         default: https://valohaidemo.blob.core.windows.net/mnist/train-images-idx3-ubyte.gz
@@ -18,8 +17,7 @@
 - step:
     name: Train model (MNIST)
     image: tensorflow/tensorflow:1.13.1-gpu-py3
-    command:
-      - python train.py {parameters}
+    command: python train.py {parameters}
     parameters:
       - name: max_steps
         pass-as: --max_steps={v}
