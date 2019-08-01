@@ -95,7 +95,7 @@
       - [preprocess.output.*train-images*, train.input.training-set-images]
       - [preprocess.output.*train-labels*, train.input.training-set-labels]
       - [preprocess.output.*test-images*, train.input.test-set-images]
-      - [preprocess.output.*test-images*, train.input.test-set-labels]
+      - [preprocess.output.*test-labels*, train.input.test-set-labels]
 
 - endpoint:
     name: greet
