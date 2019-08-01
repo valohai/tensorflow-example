@@ -91,7 +91,7 @@
           - name: training-set-labels
           - name: test-set-images
           - name: test-set-labels
-      - name: predict
+      - name: evaluate
         type: execution
         step: Batch inference (MNIST)
     edges:
@@ -99,7 +99,7 @@
       - [preprocess.output.*train-labels*, train.input.training-set-labels]
       - [preprocess.output.*test-images*, train.input.test-set-images]
       - [preprocess.output.*test-labels*, train.input.test-set-labels]
-      - [train.output.model*, predict.input.model]
+      - [train.output.model*, evaluate.input.model]
 
 - endpoint:
     name: greet
