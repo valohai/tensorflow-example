@@ -75,7 +75,7 @@
     name: greet
     image: python:3.6
     port: 8000
-    server-command: python -m wsgiref.simple_server
+    server-command: python greet_server.py
     description: test the serving environment
 
 - endpoint:
