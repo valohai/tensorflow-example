@@ -75,6 +75,32 @@
       - nvcc --version | grep release
       - cat /usr/include/x86_64-linux-gnu/cudnn_v*.h | grep CUDNN_MAJOR -A 2
 
+- pipeline:
+    name: Example Pipeline
+    nodes:
+      - name: preprocess
+        type: execution
+        step: Preprocess dataset (MNIST)
+      - name: train
+        type: execution
+        step: Train model (MNIST)
+        override:
+          image: tensorflow/tensorflow:1.13.1-py3
+          inputs:
+          - name: training-set-images
+          - name: training-set-labels
+          - name: test-set-images
+          - name: test-set-labels
+      - name: evaluate
+        type: execution
+        step: Batch inference (MNIST)
+    edges:
+      - [preprocess.output.*train-images*, train.input.training-set-images]
+      - [preprocess.output.*train-labels*, train.input.training-set-labels]
+      - [preprocess.output.*test-images*, train.input.test-set-images]
+      - [preprocess.output.*test-labels*, train.input.test-set-labels]
+      - [train.output.model*, evaluate.input.model]
+
 - endpoint:
     name: greet
     image: python:3.6
