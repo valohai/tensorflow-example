@@ -101,6 +101,68 @@
       - [preprocess.output.*test-labels*, train.input.test-set-labels]
       - [train.output.model*, evaluate.input.model]
 
+- pipeline:
+    name: Three-Trainings Pipeline
+    nodes:
+      - name: preprocess
+        type: execution
+        step: Preprocess dataset (MNIST)
+      - name: train1
+        type: execution
+        step: Train model (MNIST)
+        override:
+          image: tensorflow/tensorflow:1.13.1-py3
+          inputs:
+          - name: training-set-images
+          - name: training-set-labels
+          - name: test-set-images
+          - name: test-set-labels
+      - name: train2
+        type: execution
+        step: Train model (MNIST)
+        override:
+          image: tensorflow/tensorflow:1.13.1-py3
+          inputs:
+          - name: training-set-images
+          - name: training-set-labels
+          - name: test-set-images
+          - name: test-set-labels
+      - name: train3
+        type: execution
+        step: Train model (MNIST)
+        override:
+          image: tensorflow/tensorflow:1.13.1-py3
+          inputs:
+          - name: training-set-images
+          - name: training-set-labels
+          - name: test-set-images
+          - name: test-set-labels
+      - name: evaluate1
+        type: execution
+        step: Batch inference (MNIST)
+      - name: evaluate2
+        type: execution
+        step: Batch inference (MNIST)
+      - name: evaluate3
+        type: execution
+        step: Batch inference (MNIST)
+    edges:
+      - [preprocess.output.*train-images*, train1.input.training-set-images]
+      - [preprocess.output.*train-labels*, train1.input.training-set-labels]
+      - [preprocess.output.*test-images*, train1.input.test-set-images]
+      - [preprocess.output.*test-labels*, train1.input.test-set-labels]
+      - [preprocess.output.*train-images*, train2.input.training-set-images]
+      - [preprocess.output.*train-labels*, train2.input.training-set-labels]
+      - [preprocess.output.*test-images*, train2.input.test-set-images]
+      - [preprocess.output.*test-labels*, train2.input.test-set-labels]
+      - [preprocess.output.*train-images*, train3.input.training-set-images]
+      - [preprocess.output.*train-labels*, train3.input.training-set-labels]
+      - [preprocess.output.*test-images*, train3.input.test-set-images]
+      - [preprocess.output.*test-labels*, train3.input.test-set-labels]
+      - [train1.output.model*, evaluate1.input.model]
+      - [train2.output.model*, evaluate2.input.model]
+      - [train3.output.model*, evaluate3.input.model]
+
 - endpoint:
     name: greet
     image: python:3.6
