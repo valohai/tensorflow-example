@@ -51,7 +51,6 @@
 
 - step:
     name: Batch inference (MNIST)
-    environment: azure-westeurope-f2sv2
     image: tensorflow/tensorflow:1.13.1-py3
     command:
       - pip install --disable-pip-version-check --quiet -r requirements.txt
