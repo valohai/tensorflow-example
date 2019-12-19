@@ -54,7 +54,7 @@
     image: tensorflow/tensorflow:1.13.1-py3
     command:
       - pip install --disable-pip-version-check --quiet -r requirements.txt
-      - python batch_inference.py --model-pb=/valohai/inputs/model/model.pb --input-root=/valohai/inputs/images
+      - python batch_inference.py --model-dir=./valohai/inputs/model/ --image-dir=/valohai/inputs/images
     inputs:
       - name: model
       - name: images

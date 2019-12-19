@@ -3,6 +3,7 @@ import csv
 import json
 import os
 import sys
+import glob
 
 from PIL import Image
 
@@ -32,15 +33,30 @@ def find_images(base):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--model-pb', required=True)
-    ap.add_argument('--input-root', required=True)
+    ap.add_argument('--model-dir', required=True)
+    ap.add_argument('--image-dir', required=True)
     ap.add_argument('--output-csv', default=os.path.join(os.environ.get('VH_OUTPUTS_DIR', '.'), 'predictions.csv'))
     ap.add_argument('--output-json', default=os.path.join(os.environ.get('VH_OUTPUTS_DIR', '.'), 'predictions.json'))
     args = ap.parse_args()
-    predictor = Predictor(model_filename=args.model_pb)
+
+    # validate the arguments
+    if not os.path.isdir(args.model_dir):
+        raise Exception('--model-dir must be a directory')
+    if not os.path.isdir(args.image_dir):
+        raise Exception('--image-dir must be a directory')
+
+    model_files = glob.glob(f'{args.model_dir}/*.pb')
+    if not model_files:
+        raise Exception(f'no .pb models under {model_files}')
+
+    # use the first model we find...
+    model_filename = model_files[0]
+    print(f'Using {model_filename}...')
+
+    predictor = Predictor(model_filename=model_filename)
     json_blob = {}
-    with open(args.output_csv, 'w', newline='') as csvout:
-        csv_writer = csv.writer(csvout)
+    with open(args.output_csv, 'w', newline='') as csv_out:
+        csv_writer = csv.writer(csv_out)
         csv_writer.writerow([
             'filename',
             'best_guess',
@@ -49,7 +65,7 @@ def main():
             'error',
         ])
 
-        for relname, filename in find_images(args.input_root):
+        for relname, filename in find_images(args.image_dir):
             try:
                 img = Image.open(filename)
                 prediction = predictor.predict_digit(img)
@@ -74,8 +90,8 @@ def main():
 
     predictor.close()
 
-    with open(args.output_json, 'w', newline='') as jsonout:
-        json.dump(json_blob, jsonout, sort_keys=True)
+    with open(args.output_json, 'w', newline='') as json_out:
+        json.dump(json_blob, json_out, sort_keys=True)
 
 
 if __name__ == '__main__':
