@@ -51,11 +51,10 @@
 
 - step:
     name: Batch inference (MNIST)
-    environment: azure-westeurope-f2sv2
     image: tensorflow/tensorflow:1.13.1-py3
     command:
       - pip install --disable-pip-version-check --quiet -r requirements.txt
-      - python batch_inference.py --model-pb=/valohai/inputs/model/model.pb --input-root=/valohai/inputs/images
+      - python batch_inference.py --model-dir=/valohai/inputs/model/ --image-dir=/valohai/inputs/images
     inputs:
       - name: model
       - name: images
@@ -63,6 +62,13 @@
           - https://valohaidemo.blob.core.windows.net/mnist/four-inverted.png
           - https://valohaidemo.blob.core.windows.net/mnist/five-inverted.png
           - https://valohaidemo.blob.core.windows.net/mnist/five-normal.jpg
+
+- step:
+    name: Compare predictions (MNIST)
+    image: tensorflow/tensorflow:1.13.1-py3
+    command: python compare.py --prediction-dir=/valohai/inputs/predictions/
+    inputs:
+      - name: predictions
 
 - step:
     name: Worker environment check
@@ -73,10 +79,9 @@
       - nvidia-smi
       - python --version
       - nvcc --version | grep release
-      - cat /usr/include/x86_64-linux-gnu/cudnn_v*.h | grep CUDNN_MAJOR -A 2
 
 - pipeline:
-    name: Example Pipeline
+    name: Training Pipeline
     nodes:
       - name: preprocess
         type: execution
@@ -85,12 +90,11 @@
         type: execution
         step: Train model (MNIST)
         override:
-          image: tensorflow/tensorflow:1.13.1-py3
           inputs:
-          - name: training-set-images
-          - name: training-set-labels
-          - name: test-set-images
-          - name: test-set-labels
+            - name: training-set-images
+            - name: training-set-labels
+            - name: test-set-images
+            - name: test-set-labels
       - name: evaluate
         type: execution
         step: Batch inference (MNIST)
@@ -101,12 +105,76 @@
       - [preprocess.output.*test-labels*, train.input.test-set-labels]
       - [train.output.model*, evaluate.input.model]
 
+- pipeline:
+    name: Three-Trainings Pipeline
+    nodes:
+      - name: preprocess
+        type: execution
+        step: Preprocess dataset (MNIST)
+      - name: train1
+        type: execution
+        step: Train model (MNIST)
+        override:
+          inputs:
+            - name: training-set-images
+            - name: training-set-labels
+            - name: test-set-images
+            - name: test-set-labels
+      - name: train2
+        type: execution
+        step: Train model (MNIST)
+        override:
+          inputs:
+            - name: training-set-images
+            - name: training-set-labels
+            - name: test-set-images
+            - name: test-set-labels
+      - name: train3
+        type: execution
+        step: Train model (MNIST)
+        override:
+          inputs:
+            - name: training-set-images
+            - name: training-set-labels
+            - name: test-set-images
+            - name: test-set-labels
+      - name: evaluate1
+        type: execution
+        step: Batch inference (MNIST)
+      - name: evaluate2
+        type: execution
+        step: Batch inference (MNIST)
+      - name: evaluate3
+        type: execution
+        step: Batch inference (MNIST)
+      - name: find-best-model
+        type: execution
+        step: Compare predictions (MNIST)
+    edges:
+      - [preprocess.output.*train-images*, train1.input.training-set-images]
+      - [preprocess.output.*train-labels*, train1.input.training-set-labels]
+      - [preprocess.output.*test-images*, train1.input.test-set-images]
+      - [preprocess.output.*test-labels*, train1.input.test-set-labels]
+      - [preprocess.output.*train-images*, train2.input.training-set-images]
+      - [preprocess.output.*train-labels*, train2.input.training-set-labels]
+      - [preprocess.output.*test-images*, train2.input.test-set-images]
+      - [preprocess.output.*test-labels*, train2.input.test-set-labels]
+      - [preprocess.output.*train-images*, train3.input.training-set-images]
+      - [preprocess.output.*train-labels*, train3.input.training-set-labels]
+      - [preprocess.output.*test-images*, train3.input.test-set-images]
+      - [preprocess.output.*test-labels*, train3.input.test-set-labels]
+      - [train1.output.model*, evaluate1.input.model]
+      - [train2.output.model*, evaluate2.input.model]
+      - [train3.output.model*, evaluate3.input.model]
+      - [evaluate1.output.*.json, find-best-model.input.predictions]
+      - [evaluate2.output.*.json, find-best-model.input.predictions]
+      - [evaluate3.output.*.json, find-best-model.input.predictions]
+
 - endpoint:
     name: greet
     image: python:3.6
     port: 8000
     server-command: python -m wsgiref.simple_server
-    description: test the serving environment
 
 - endpoint:
     name: predict-digit

@@ -3,6 +3,8 @@ import csv
 import json
 import os
 import sys
+import glob
+import uuid
 
 from PIL import Image
 
@@ -19,63 +21,60 @@ IMAGE_EXTENSIONS = {
 
 
 def find_images(base):
-    for dirpath, dirnames, filenames in os.walk(base):
-        dirnames[:] = [dirname for dirname in dirnames if dirnames[0] not in ('._')]
+    for dir_path, dir_names, filenames in os.walk(base):
+        dir_names[:] = [dirname for dirname in dir_names if dir_names[0] not in '._']
         for filename in filenames:
-            filename = os.path.join(dirpath, filename)
-            relname = os.path.relpath(filename, start=base)
-            ext = os.path.splitext(filename)[1].lower()
+            file_path = os.path.join(dir_path, filename)
+            base_file_path = os.path.relpath(file_path, start=base)
+            ext = os.path.splitext(file_path)[1].lower()
             if ext not in IMAGE_EXTENSIONS:
                 continue
-            yield (relname, filename)
+            yield (base_file_path, file_path)
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--model-pb', required=True)
-    ap.add_argument('--input-root', required=True)
-    ap.add_argument('--output-csv', default=os.path.join(os.environ.get('VH_OUTPUTS_DIR', '.'), 'predictions.csv'))
-    ap.add_argument('--output-json', default=os.path.join(os.environ.get('VH_OUTPUTS_DIR', '.'), 'predictions.json'))
+    ap.add_argument('--model-dir', required=True)
+    ap.add_argument('--image-dir', required=True)
+    ap.add_argument('--output-dir', default=os.environ.get('VH_OUTPUTS_DIR', '.'))
     args = ap.parse_args()
-    predictor = Predictor(model_filename=args.model_pb)
+
+    # validate the arguments
+    if not os.path.isdir(args.model_dir):
+        raise Exception('--model-dir must be a directory')
+    if not os.path.isdir(args.image_dir):
+        raise Exception('--image-dir must be a directory')
+    if not os.path.isdir(args.output_dir):
+        raise Exception('--output-dir must be a directory')
+
+    # use the first model we find under the designated model directory
+    model_files = glob.glob('{}/*.pb'.format(args.model_dir))
+    if not model_files:
+        raise Exception('no .pb models under {}'.format(model_files))
+    model_filename = model_files[0]
+    print('Using {}...'.format(model_filename))
+
+    # generate names for prediction files (CSV and JSON)
+    suffix = uuid.uuid4()
+    output_json_filename = os.path.join(args.output_dir, 'predictions-{}.json'.format(suffix))
+
+    # do batch inference on the given images
     json_blob = {}
-    with open(args.output_csv, 'w', newline='') as csvout:
-        csv_writer = csv.writer(csvout)
-        csv_writer.writerow([
-            'filename',
-            'best_guess',
-            'best_guess_probability',
-            'inverted',
-            'error',
-        ])
-
-        for relname, filename in find_images(args.input_root):
-            try:
-                img = Image.open(filename)
-                prediction = predictor.predict_digit(img)
-                print(relname, prediction)
-                json_blob[relname] = prediction
-                csv_writer.writerow([
-                    relname,
-                    prediction['best_guess'],
-                    prediction['best_guess_probability'],
-                    ('inverted' if prediction['inverted'] else ''),
-                ])
-            except Exception as exc:
-                csv_writer.writerow([
-                    relname,
-                    '',
-                    '',
-                    '',
-                    str(exc),
-                ])
-                json_blob[relname] = {'error': exc}
-                print('Unable to process %s: %s' % (relname, exc), file=sys.stderr)
-
+    predictor = Predictor(model_filename=model_filename)
+    for image_filename, image_path in find_images(args.image_dir):
+        try:
+            img = Image.open(image_path)
+            prediction = predictor.predict_digit(img)
+            json_blob[image_filename] = prediction
+            print(image_filename, prediction)
+        except Exception as exc:
+            json_blob[image_filename] = {'error': exc}
+            print('Unable to process %s: %s' % (image_filename, exc), file=sys.stderr)
     predictor.close()
 
-    with open(args.output_json, 'w', newline='') as jsonout:
-        json.dump(json_blob, jsonout, sort_keys=True)
+    # save predictions in a JSON file
+    with open(output_json_filename, 'w', newline='') as json_out:
+        json.dump(json_blob, json_out, sort_keys=True)
 
 
 if __name__ == '__main__':
