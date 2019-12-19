@@ -66,8 +66,7 @@
 - step:
     name: Compare predictions (MNIST)
     image: tensorflow/tensorflow:1.13.1-py3
-    command:
-      - ls -la /valohai/inputs/predictions
+    command: python compare.py --prediction-dir=/valohai/inputs/predictions/
     inputs:
       - name: predictions
 
@@ -167,9 +166,9 @@
       - [train1.output.model*, evaluate1.input.model]
       - [train2.output.model*, evaluate2.input.model]
       - [train3.output.model*, evaluate3.input.model]
-      - [evaluate1.output.*.json, collate.input.predictions]
-      - [evaluate2.output.*.json, collate.input.predictions]
-      - [evaluate3.output.*.json, collate.input.predictions]
+      - [evaluate1.output.*.json, find-best-model.input.predictions]
+      - [evaluate2.output.*.json, find-best-model.input.predictions]
+      - [evaluate3.output.*.json, find-best-model.input.predictions]
 
 - endpoint:
     name: greet
