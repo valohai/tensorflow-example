@@ -64,6 +64,14 @@
           - https://valohaidemo.blob.core.windows.net/mnist/five-normal.jpg
 
 - step:
+    name: Compare predictions (MNIST)
+    image: tensorflow/tensorflow:1.13.1-py3
+    command:
+      - ls -la /valohai/inputs/predictions
+    inputs:
+      - name: predictions
+
+- step:
     name: Worker environment check
     image: tensorflow/tensorflow:1.13.1-gpu-py3
     command:
@@ -86,10 +94,10 @@
         override:
           image: tensorflow/tensorflow:1.13.1-py3
           inputs:
-          - name: training-set-images
-          - name: training-set-labels
-          - name: test-set-images
-          - name: test-set-labels
+            - name: training-set-images
+            - name: training-set-labels
+            - name: test-set-images
+            - name: test-set-labels
       - name: evaluate
         type: execution
         step: Batch inference (MNIST)
@@ -112,30 +120,30 @@
         override:
           image: tensorflow/tensorflow:1.13.1-py3
           inputs:
-          - name: training-set-images
-          - name: training-set-labels
-          - name: test-set-images
-          - name: test-set-labels
+            - name: training-set-images
+            - name: training-set-labels
+            - name: test-set-images
+            - name: test-set-labels
       - name: train2
         type: execution
         step: Train model (MNIST)
         override:
           image: tensorflow/tensorflow:1.13.1-py3
           inputs:
-          - name: training-set-images
-          - name: training-set-labels
-          - name: test-set-images
-          - name: test-set-labels
+            - name: training-set-images
+            - name: training-set-labels
+            - name: test-set-images
+            - name: test-set-labels
       - name: train3
         type: execution
         step: Train model (MNIST)
         override:
           image: tensorflow/tensorflow:1.13.1-py3
           inputs:
-          - name: training-set-images
-          - name: training-set-labels
-          - name: test-set-images
-          - name: test-set-labels
+            - name: training-set-images
+            - name: training-set-labels
+            - name: test-set-images
+            - name: test-set-labels
       - name: evaluate1
         type: execution
         step: Batch inference (MNIST)
@@ -145,6 +153,9 @@
       - name: evaluate3
         type: execution
         step: Batch inference (MNIST)
+      - name: collate
+        type: execution
+        step: Compare predictions (MNIST)
     edges:
       - [preprocess.output.*train-images*, train1.input.training-set-images]
       - [preprocess.output.*train-labels*, train1.input.training-set-labels]
@@ -161,13 +172,15 @@
       - [train1.output.model*, evaluate1.input.model]
       - [train2.output.model*, evaluate2.input.model]
       - [train3.output.model*, evaluate3.input.model]
+      - [evaluate1.output.*.json, collate.input.predictions]
+      - [evaluate2.output.*.json, collate.input.predictions]
+      - [evaluate3.output.*.json, collate.input.predictions]
 
 - endpoint:
     name: greet
     image: python:3.6
     port: 8000
     server-command: python -m wsgiref.simple_server
-    description: test the serving environment
 
 - endpoint:
     name: predict-digit
