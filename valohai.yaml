@@ -149,7 +149,7 @@
       - name: evaluate3
         type: execution
         step: Batch inference (MNIST)
-      - name: collate
+      - name: find-best-model
         type: execution
         step: Compare predictions (MNIST)
     edges:
