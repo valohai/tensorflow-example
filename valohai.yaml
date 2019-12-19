@@ -92,7 +92,6 @@
         type: execution
         step: Train model (MNIST)
         override:
-          image: tensorflow/tensorflow:1.13.1-py3
           inputs:
             - name: training-set-images
             - name: training-set-labels
@@ -118,7 +117,6 @@
         type: execution
         step: Train model (MNIST)
         override:
-          image: tensorflow/tensorflow:1.13.1-py3
           inputs:
             - name: training-set-images
             - name: training-set-labels
@@ -128,7 +126,6 @@
         type: execution
         step: Train model (MNIST)
         override:
-          image: tensorflow/tensorflow:1.13.1-py3
           inputs:
             - name: training-set-images
             - name: training-set-labels
@@ -138,7 +135,6 @@
         type: execution
         step: Train model (MNIST)
         override:
-          image: tensorflow/tensorflow:1.13.1-py3
           inputs:
             - name: training-set-images
             - name: training-set-labels
