@@ -48,15 +48,15 @@ def main():
         raise Exception('--output-dir must be a directory')
 
     # use the first model we find under the designated model directory
-    model_files = glob.glob(f'{args.model_dir}/*.pb')
+    model_files = glob.glob('{}/*.pb'.format(args.model_dir))
     if not model_files:
-        raise Exception(f'no .pb models under {model_files}')
+        raise Exception('no .pb models under {}'.format(model_files))
     model_filename = model_files[0]
-    print(f'Using {model_filename}...')
+    print('Using {}...'.format(model_filename))
 
     # generate names for prediction files (CSV and JSON)
     suffix = uuid.uuid4()
-    output_json_filename = os.path.join(args.output_dir, f'predictions-{suffix}.json')
+    output_json_filename = os.path.join(args.output_dir, 'predictions-{}.json'.format(suffix))
 
     # do batch inference on the given images
     json_blob = {}
