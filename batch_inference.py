@@ -5,6 +5,7 @@ import os
 import sys
 import glob
 import uuid
+import shutil
 
 from PIL import Image
 
@@ -37,6 +38,7 @@ def main():
     ap.add_argument('--model-dir', required=True)
     ap.add_argument('--image-dir', required=True)
     ap.add_argument('--output-dir', default=os.environ.get('VH_OUTPUTS_DIR', '.'))
+    ap.add_argument('--output-best-model', default=False)
     args = ap.parse_args()
 
     # validate the arguments
@@ -75,6 +77,9 @@ def main():
     # save predictions in a JSON file
     with open(output_json_filename, 'w', newline='') as json_out:
         json.dump(json_blob, json_out, sort_keys=True)
+
+    if(args.output_best_model) :
+        shutil.copy(model_filename, os.path.join(args.output_dir, 'model-{}.pb'.format(suffix)))
 
 
 if __name__ == '__main__':
