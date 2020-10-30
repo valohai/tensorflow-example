@@ -54,7 +54,7 @@
     image: tensorflow/tensorflow:1.13.1-py3
     command:
       - pip install --disable-pip-version-check --quiet -r requirements.txt
-      - python batch_inference.py --model-dir=/valohai/inputs/model/ --image-dir=/valohai/inputs/images
+      - python batch_inference.py {parameters}
     inputs:
       - name: model
       - name: images
@@ -62,13 +62,37 @@
           - https://valohaidemo.blob.core.windows.net/mnist/four-inverted.png
           - https://valohaidemo.blob.core.windows.net/mnist/five-inverted.png
           - https://valohaidemo.blob.core.windows.net/mnist/five-normal.jpg
+    parameters:
+      - name: output-best-model
+        pass-as: --output-best-model={v}
+        description: Save model to output folder
+        type: flag
+        default: True
+      - name: model-dir
+        pass-as: --model-dir={v}
+        description: Directory for models
+        type: string
+        default: /valohai/inputs/model/
+      - name: image-dir
+        pass-as: --image-dir={v}
+        description: Directory for image
+        type: string
+        default: /valohai/inputs/images/
 
 - step:
     name: Compare predictions (MNIST)
     image: tensorflow/tensorflow:1.13.1-py3
-    command: python compare.py --prediction-dir=/valohai/inputs/predictions/
+    command: python compare.py {parameters}
     inputs:
       - name: predictions
+      - name: models
+        optional: True
+    parameters:
+      - name: prediction-dir
+        pass-as: --prediction-dir={v}
+        description: Directory for predictions
+        type: string
+        default: /valohai/inputs/predictions/
 
 - step:
     name: Worker environment check
