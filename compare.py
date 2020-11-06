@@ -3,7 +3,7 @@ import glob
 import json
 import os
 import shutil
-
+from collections import namedtuple 
 
 def main():
     ap = argparse.ArgumentParser()
@@ -28,7 +28,8 @@ def main():
 
     # here we have some simple example logic to compare predictions to figure out which
     # predictions are the best, so this varies from use-case to use-case
-    best_of_best = (None, None, None)
+    BestModel = namedtuple('BestModel', 'prediction, average_best_guess, model')
+    best_of_best = BestModel(prediction=None, average_best_guess=None, model=None)
     average_best_guesses = dict()
     for prediction_filename, blob in prediction_blobs.items():
         best_guess_probabilities = []
@@ -44,12 +45,12 @@ def main():
         model_filename = ("model-{}.pb").format(suffix)
         model_filepath = os.path.join(vh_inputs_dir, 'models', model_filename)
 
-        if not best_of_best[1]:
-            best_of_best = (prediction_filename, average_best_guess, model_filename)
-        elif average_best_guess > best_of_best[1]:
-            best_of_best = (prediction_filename, average_best_guess, model_filename)
+        if not best_of_best.average_best_guess:
+            best_of_best = BestModel(prediction=prediction_filename, average_best_guess=average_best_guess, model=model_filename)
+        elif average_best_guess > best_of_best.average_best_guess:
+            best_of_best = BestModel(prediction=prediction_filename, average_best_guess=average_best_guess, model=model_filename)
 
-    print('The best model is the one that generated {} ({})'.format(best_of_best[0], best_of_best[1]))
+    print('The best model is the one that generated {} ({})'.format(best_of_best.prediction, best_of_best.average_best_guess))
     
     if(os.path.exists(model_filepath)) :
         shutil.copy(model_filepath, os.path.join(vh_outputs_dir, 'model.pb'))
