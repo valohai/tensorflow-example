@@ -2,7 +2,8 @@
 
 - step:
     name: Preprocess dataset (MNIST)
-    image: tensorflow/tensorflow:1.13.1-gpu-py3
+    image: tensorflow/tensorflow:1.13.1-py3
+    environment: azure-westeurope-f2sv2
     command: python preprocess.py
     inputs:
       - name: training-set-images
@@ -16,7 +17,8 @@
 
 - step:
     name: Train model (MNIST)
-    image: tensorflow/tensorflow:1.13.1-gpu-py3
+    image: tensorflow/tensorflow:1.13.1-py3
+    environment: azure-westeurope-f2sv2
     command: python train.py {parameters}
     parameters:
       - name: max_steps
@@ -52,6 +54,7 @@
 - step:
     name: Batch inference (MNIST)
     image: tensorflow/tensorflow:1.13.1-py3
+    environment: azure-westeurope-f2sv2
     command:
       - pip install --disable-pip-version-check --quiet -r requirements.txt
       - python batch_inference.py {parameters}
@@ -82,6 +85,7 @@
 - step:
     name: Compare predictions (MNIST)
     image: tensorflow/tensorflow:1.13.1-py3
+    environment: azure-westeurope-f2sv2
     command: python compare.py {parameters}
     inputs:
       - name: predictions
@@ -96,13 +100,12 @@
 
 - step:
     name: Worker environment check
-    image: tensorflow/tensorflow:1.13.1-gpu-py3
+    image: tensorflow/tensorflow:1.13.1-py3
+    environment: azure-westeurope-f2sv2
     command:
       - pwd
       - ls -la
-      - nvidia-smi
       - python --version
-      - nvcc --version | grep release
 
 - pipeline:
     name: Training Pipeline
