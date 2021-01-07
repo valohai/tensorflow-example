@@ -32,6 +32,12 @@ def predict_wsgi(environ, start_response):
     if not predictor:
         predictor = Predictor()
     prediction = predictor.predict_digit(img)
+
+    # The following line allows Valohai to track endpoint predictions
+    # while the model is deployed. Here we remove the full predictions
+    # details as we are only interested in tracking the rest of the results.
+    print(json.dumps({'vh_metadata': {k: v for k, v in prediction.items() if k != 'predictions'}}))
+
     response = Response(json.dumps(prediction), mimetype='application/json')
     return response(environ, start_response)
 
