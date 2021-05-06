@@ -56,6 +56,7 @@ def train(flags, sess, model, mnist):
     y_ = model['y_']
     keep_prob = model['keep_prob']
     accuracy = model['accuracy']
+    loss = model['loss']
     train_step = model['train_step']
     merged = model['merged']
     all_weights = model['all_weights']
@@ -82,9 +83,10 @@ def train(flags, sess, model, mnist):
 
         if i % 10 == 0:
             # Record summaries and test-set accuracy
-            summary, acc = sess.run([merged, accuracy], feed_dict=feed_dict(False))
+            summary, acc = sess.run([merged, accuracy, loss], feed_dict=feed_dict(False))
             test_writer.add_summary(summary, i)
             print(json.dumps({'step': i, 'accuracy': acc.item()}))
+            print(json.dumps({'step': i, 'loss': acc.item()}))
         elif i % 100 == 99:  # Record train set summaries, and train
             run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
             run_metadata = tf.RunMetadata()
