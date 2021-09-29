@@ -1,59 +1,72 @@
-import argparse
-import glob
 import json
 import os
 import shutil
-from collections import namedtuple 
+from collections import namedtuple
+
+from numpy import float32
+
+import valohai
+
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--prediction-dir', required=True)
-    args = ap.parse_args()
-    vh_inputs_dir = os.getenv('VH_INPUTS_DIR', './')
-    vh_outputs_dir = os.getenv('VH_OUTPUTS_DIR', './')
+    # valohai.prepare enables us to update the valohai.yaml configuration file with
+    # the Valohai command-line client by running `valohai yaml step compare.py`
 
-    if not os.path.isdir(args.prediction_dir):
-        raise Exception('--prediction-dir must be a directory')
-
-    json_files = glob.glob('{}/*.json'.format(args.prediction_dir))
-    if not json_files:
-        raise Exception('no .json predictions under {}'.format(json_files))
-
-    print('Comparing predictions of {} JSON files...'.format(len(json_files)))
-
-    prediction_blobs = dict()
-    for file_path in json_files:
-        with open(file_path, 'r') as f:
-            prediction_blobs[os.path.basename(file_path)] = json.load(f)
+    valohai.prepare(
+        step='compare-predictions',
+        image='python:3.9',
+        default_inputs={
+            'predictions': {
+                'default': None,
+                'optional': False,
+            },
+            'models': [],
+        },
+    )
 
     # here we have some simple example logic to compare predictions to figure out which
     # predictions are the best, so this varies from use-case to use-case
     BestModel = namedtuple('BestModel', 'prediction, average_best_guess, model')
     best_of_best = BestModel(prediction=None, average_best_guess=None, model=None)
     average_best_guesses = dict()
-    for prediction_filename, blob in prediction_blobs.items():
+    model_filename = ''
+
+    for prediction_path in valohai.inputs('predictions').paths():
+        filename = os.path.basename(prediction_path)
+
+        extension = os.path.splitext(prediction_path)[1].lower()
+        if extension != '.json':
+            print(f'{filename} is not a JSON file')
+            continue
+
+        with open(prediction_path, 'r') as file:
+            blob = json.load(file)
+
         best_guess_probabilities = []
         for sample_filename, prediction in blob.items():
             best_guess = str(prediction['best_guess'])
             probability = prediction['predictions'][best_guess]
-            best_guess_probabilities.append(probability)
+            best_guess_probabilities.append(float32(probability))
+
         average_best_guess = sum(best_guess_probabilities) / len(best_guess_probabilities)
-        average_best_guesses[prediction_filename] = average_best_guess
-        print('{} => {} (average best guess probability)'.format(prediction_filename, average_best_guess))
+        average_best_guesses[filename] = average_best_guess
+        print(f'{filename} => {average_best_guess} (average best guess probability)')
 
-        suffix = prediction_filename.split('predictions-')[1].split('.json')[0]
-        model_filename = ("model-{}.pb").format(suffix)
-        model_filepath = os.path.join(vh_inputs_dir, 'models', model_filename)
+        suffix = filename.split('predictions-')[1].split('.json')[0]
+        model_filename = f"model-{suffix}.h5"
 
-        if not best_of_best.average_best_guess:
-            best_of_best = BestModel(prediction=prediction_filename, average_best_guess=average_best_guess, model=model_filename)
-        elif average_best_guess > best_of_best.average_best_guess:
-            best_of_best = BestModel(prediction=prediction_filename, average_best_guess=average_best_guess, model=model_filename)
+        if not best_of_best.average_best_guess or average_best_guess > best_of_best.average_best_guess:
+            best_of_best = BestModel(
+                prediction=filename,
+                average_best_guess=average_best_guess,
+                model=model_filename,
+            )
 
-    print('The best model is the one that generated {} ({})'.format(best_of_best.prediction, best_of_best.average_best_guess))
-    
-    if(os.path.exists(model_filepath)) :
-        shutil.copy(model_filepath, os.path.join(vh_outputs_dir, 'model.pb'))
+    print(f'The best model is the one that generated {best_of_best.prediction} ({best_of_best.average_best_guess})')
+
+    model_path = next((model for model in valohai.inputs('models').paths() if model_filename in model), '')
+    if model_path:
+        shutil.copy(model_path, valohai.outputs().path(model_filename))
 
 
 if __name__ == '__main__':

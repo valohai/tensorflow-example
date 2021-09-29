@@ -1,0 +1,4 @@
+numpy
+pillow
+tensorflow==2.6.0
+valohai-utils
