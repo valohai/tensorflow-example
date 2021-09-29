@@ -1,15 +1,27 @@
+"""Runs prediction on images given as arguments.
+
+Requires to have the trained MNIST model as a model.h5 file.
+"""
+
 import argparse
 
+import tensorflow as tf
 from PIL import Image
 
-from tf_mnist.predict import Predictor
+from utils.image import predict_image, process_image
 
-if __name__ == '__main__':
+
+def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('files', nargs='*')
     args = ap.parse_args()
-    predictor = Predictor()
+
+    model = tf.keras.models.load_model('model.h5')
+
     for filename in args.files:
-        img = Image.open(filename)
-        print(filename, predictor.predict_digit(img))
-    predictor.close()
+        image, inverted = process_image(Image.open(filename))
+        print(filename, predict_image(model, image, inverted))
+
+
+if __name__ == '__main__':
+    main()

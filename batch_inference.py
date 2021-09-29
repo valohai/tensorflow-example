@@ -1,85 +1,67 @@
-import argparse
-import csv
 import json
 import os
 import sys
-import glob
-import uuid
-import shutil
 
+import tensorflow as tf
+import valohai
 from PIL import Image
 
-from tf_mnist.predict import Predictor
-
-IMAGE_EXTENSIONS = {
-    '.png',
-    '.jpg',
-    '.jpeg',
-    '.bmp',
-    '.gif',
-    '.tiff',
-}
-
-
-def find_images(base):
-    for dir_path, dir_names, filenames in os.walk(base):
-        dir_names[:] = [dirname for dirname in dir_names if dir_names[0] not in '._']
-        for filename in filenames:
-            file_path = os.path.join(dir_path, filename)
-            base_file_path = os.path.relpath(file_path, start=base)
-            ext = os.path.splitext(file_path)[1].lower()
-            if ext not in IMAGE_EXTENSIONS:
-                continue
-            yield (base_file_path, file_path)
+from utils.image import predict_image, process_image
 
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--model-dir', required=True)
-    ap.add_argument('--image-dir', required=True)
-    ap.add_argument('--output-dir', default=os.environ.get('VH_OUTPUTS_DIR', '.'))
-    ap.add_argument('--output-best-model', default=True)
-    args = ap.parse_args()
+    # valohai.prepare enables us to update the valohai.yaml configuration file with
+    # the Valohai command-line client by running `valohai yaml step batch_inference.py`
 
-    # validate the arguments
-    if not os.path.isdir(args.model_dir):
-        raise Exception('--model-dir must be a directory')
-    if not os.path.isdir(args.image_dir):
-        raise Exception('--image-dir must be a directory')
-    if not os.path.isdir(args.output_dir):
-        raise Exception('--output-dir must be a directory')
+    valohai.prepare(
+        step='batch-inference',
+        image='tensorflow/tensorflow:2.6.0',
+        default_inputs={
+            'model': {
+                'default': None,
+                'optional': False,
+            },
+            'images': [
+                'https://valohaidemo.blob.core.windows.net/mnist/four-inverted.png',
+                'https://valohaidemo.blob.core.windows.net/mnist/five-inverted.png',
+                'https://valohaidemo.blob.core.windows.net/mnist/five-normal.jpg',
+            ],
+        },
+    )
 
-    # use the first model we find under the designated model directory
-    model_files = glob.glob('{}/*.pb'.format(args.model_dir))
-    if not model_files:
-        raise Exception('no .pb models under {}'.format(model_files))
-    model_filename = model_files[0]
-    print('Using {}...'.format(model_filename))
+    print('Loading model')
+    model_path = valohai.inputs('model').path()
+    model = tf.keras.models.load_model(model_path)
 
-    # generate names for prediction files (CSV and JSON)
-    suffix = uuid.uuid4()
-    output_json_filename = os.path.join(args.output_dir, 'predictions-{}.json'.format(suffix))
-
-    # do batch inference on the given images
     json_blob = {}
-    predictor = Predictor(model_filename=model_filename)
-    for image_filename, image_path in find_images(args.image_dir):
+    for image_path in valohai.inputs('images').paths():
+        filename = os.path.basename(image_path)
+
+        extension = os.path.splitext(image_path)[1].lower()
+        if extension not in ['.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff']:
+            print(f'{filename} is not an image file')
+            continue
+
+        print(f'Running inference for {filename}')
         try:
-            img = Image.open(image_path)
-            prediction = predictor.predict_digit(img)
-            json_blob[image_filename] = prediction
-            print(image_filename, prediction)
+            image, inverted = process_image(Image.open(image_path))
+            prediction = predict_image(model, image, inverted)
+            json_blob[filename] = prediction
+            print(filename, prediction)
         except Exception as exc:
-            json_blob[image_filename] = {'error': exc}
-            print('Unable to process %s: %s' % (image_filename, exc), file=sys.stderr)
-    predictor.close()
+            json_blob[filename] = {'error': exc}
+            print(f'Unable to process {filename}: {exc}', file=sys.stderr)
 
-    # save predictions in a JSON file
-    with open(output_json_filename, 'w', newline='') as json_out:
-        json.dump(json_blob, json_out, sort_keys=True)
+    print('Saving predictions')
+    suffix = ''
+    try:
+        suffix = f'-{model_path.split("model-")[1].split(".h5")[0]}'
+    except IndexError:
+        print(f'Unable to get suffix from {model_path}')
 
-    if(args.output_best_model) :
-        shutil.copy(model_filename, os.path.join(args.output_dir, 'model-{}.pb'.format(suffix)))
+    json_path = os.path.join(valohai.outputs().path(f'predictions{suffix}.json'))
+    with open(json_path, 'w') as json_file:
+        json.dump(json_blob, json_file, sort_keys=True)
 
 
 if __name__ == '__main__':
