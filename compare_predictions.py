@@ -10,7 +10,7 @@ import valohai
 
 def main():
     # valohai.prepare enables us to update the valohai.yaml configuration file with
-    # the Valohai command-line client by running `valohai yaml step compare.py`
+    # the Valohai command-line client by running `valohai yaml step compare_predictions.py`
 
     valohai.prepare(
         step='compare-predictions',

@@ -4,7 +4,7 @@
     image: python:3.9
     command:
       - pip install numpy valohai-utils
-      - python ./preprocess.py
+      - python ./preprocess_dataset.py
     inputs:
       - name: dataset
         default: https://valohaidemo.blob.core.windows.net/mnist/mnist.npz
@@ -14,7 +14,7 @@
     image: tensorflow/tensorflow:2.6.0
     command:
       - pip install valohai-utils
-      - python ./train.py {parameters}
+      - python ./train_model.py {parameters}
     parameters:
       - name: epochs
         default: 5
@@ -45,7 +45,7 @@
     image: python:3.9
     command:
       - pip install numpy valohai-utils
-      - python ./compare.py
+      - python ./compare_predictions.py
     inputs:
       - name: predictions
       - name: models
