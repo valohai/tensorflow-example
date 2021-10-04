@@ -15,7 +15,7 @@ def log_metadata(epoch, logs):
 
 def main():
     # valohai.prepare enables us to update the valohai.yaml configuration file with
-    # the Valohai command-line client by running `valohai yaml step train.py`
+    # the Valohai command-line client by running `valohai yaml step train_model.py`
 
     valohai.prepare(
         step='train-model',
