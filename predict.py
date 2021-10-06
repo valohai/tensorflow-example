@@ -1,10 +1,10 @@
 import json
 
-import tensorflow as tf
 from PIL import Image
 from werkzeug.wrappers import Request, Response
 
 from utils.image import predict_image, process_image
+from utils.model import load_model
 
 model = None
 
@@ -22,7 +22,7 @@ def predict(environ, start_response):
     # between processes.
     global model
     if not model:
-        model = tf.keras.models.load_model('model.h5')
+        model = load_model('model.h5')
     prediction = predict_image(model, image, inverted)
 
     # The following line allows Valohai to track endpoint predictions

@@ -43,7 +43,6 @@ def main():
         tf.keras.layers.Dense(128, activation='relu'),
         tf.keras.layers.Dropout(0.2),
         tf.keras.layers.Dense(10),
-        tf.keras.layers.Softmax(),
     ])
 
     optimizer = tf.keras.optimizers.Adam(learning_rate=valohai.parameters('learning_rate').value)

@@ -2,11 +2,11 @@ import json
 import os
 import sys
 
-import tensorflow as tf
 import valohai
 from PIL import Image
 
 from utils.image import predict_image, process_image
+from utils.model import load_model
 
 
 def main():
@@ -31,7 +31,7 @@ def main():
 
     print('Loading model')
     model_path = valohai.inputs('model').path()
-    model = tf.keras.models.load_model(model_path)
+    model = load_model(model_path)
 
     json_blob = {}
     for image_path in valohai.inputs('images').paths():
