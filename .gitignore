@@ -1,2 +1,5 @@
+*.gz
+*.pb
+*.py[cod]
 .ipynb_checkpoints/
 .valohai/
