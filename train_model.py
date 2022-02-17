@@ -32,8 +32,8 @@ def main():
     # Read input files from Valohai inputs directory
     # This enables Valohai to version your training data
     # and cache the data for quick experimentation
-    print(valohai.inputs('dataset'))
-    data = pd.read_csv(valohai.inputs('dataset'))
+    #print(valohai.inputs('dataset'))
+    data = pd.read_csv(valohai.inputs('dataset').path())
     one_hot_encoded_data = pd.get_dummies(data, columns = ['Code'])
     df = one_hot_encoded_data[["Delay", "Code_200", "Code_201", "Code_204", "Code_302", "Code_400", "Code_404", "Code_500"]]
     model = LocalOutlierFactor(n_neighbors=20, novelty=True, contamination=0.1)
