@@ -6,7 +6,7 @@ from werkzeug.wrappers import Request, Response
 import pandas as pd
 from utils.image import predict_image, process_image
 from utils.model import load_model
-
+import pickle
 model = None
 
 
@@ -26,7 +26,8 @@ def predict(environ, start_response):
     # between processes.
     global model
     if not model:
-        model = load_model('model.h5')
+        with open('model.h5', 'rb') as f:
+            model = pickle.load(f)
     pred = model.predict(df2)
     
     #prediction = predict_image(model, image, inverted)

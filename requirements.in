@@ -2,6 +2,7 @@ numpy
 pandas
 sklearn
 pillow
+pickle
 tensorflow==2.6.0
 valohai-utils
 
