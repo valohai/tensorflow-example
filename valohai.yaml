@@ -7,7 +7,7 @@
       - python ./preprocess_dataset.py
     inputs:
       - name: dataset
-        default: https://valohaidemo.blob.core.windows.net/mnist/mnist.npz
+        default: http://www.testifytech.ml/Traffic_train.csv
 
 - step:
     name: train-model
