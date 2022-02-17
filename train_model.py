@@ -21,7 +21,7 @@ def main():
         step='train-model',
         image='tensorflow/tensorflow:2.6.0',
         default_inputs={
-            'dataset': 'Traffic_train.csv',
+            'dataset': 'http://www.testifytech.ml/Traffic_train.csv',
         },
         default_parameters={
             'learning_rate': 0.001,
