@@ -1,8 +1,9 @@
 import json
 
 from PIL import Image
+from numpy import where
 from werkzeug.wrappers import Request, Response
-
+import pandas as pd
 from utils.image import predict_image, process_image
 from utils.model import load_model
 
@@ -14,8 +15,11 @@ def predict(environ, start_response):
     request = Request(environ)
     if not request.files:
         return Response('no file uploaded', 400)(environ, start_response)
-    image_file = next(request.files.values())
-    image, inverted = process_image(Image.open(image_file))
+    csv_file = next(request.files.values())
+    test = pd.read_csv(csv_file)
+    one_hot_encoded_data2 = pd.get_dummies(test, columns = ['Code'])
+    df2 = one_hot_encoded_data2[["Delay", "Code_200", "Code_201", "Code_204", "Code_302", "Code_400", "Code_404", "Code_500"]]
+    #image, inverted = process_image(Image.open(image_file))
 
     # The predictor must be lazily instantiated;
     # the TensorFlow graph can apparently not be shared
@@ -23,12 +27,14 @@ def predict(environ, start_response):
     global model
     if not model:
         model = load_model('model.h5')
-    prediction = predict_image(model, image, inverted)
-
+    pred = model.predict(df2)
+    
+    #prediction = predict_image(model, image, inverted)
+    prediction = {'anomalies': where(pred == -1)}
     # The following line allows Valohai to track endpoint predictions
     # while the model is deployed. Here we remove the full predictions
     # details as we are only interested in tracking the rest of the results.
-    print(json.dumps({'vh_metadata': {k: v for k, v in prediction.items() if k != 'predictions'}}))
+    #print(json.dumps({'vh_metadata': {k: v for k, v in prediction.items() if k != 'predictions'}}))
 
     # Return a JSON response
     response = Response(json.dumps(prediction), content_type='application/json')
