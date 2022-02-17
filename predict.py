@@ -13,10 +13,11 @@ model = None
 def predict(environ, start_response):
     # Load input image data from the HTTP request
     request = Request(environ)
+    print(request)
     if not request.files:
         return Response('no file uploaded', 400)(environ, start_response)
-    csv_file = next(request.files.values())
-    test = pd.read_csv(csv_file)
+    #csv_file = next(request.files.values())
+    test = pd.read_csv(request.files)
     one_hot_encoded_data2 = pd.get_dummies(test, columns = ['Code'])
     df2 = one_hot_encoded_data2[["Delay", "Code_200", "Code_201", "Code_204", "Code_302", "Code_400", "Code_404", "Code_500"]]
     #image, inverted = process_image(Image.open(image_file))
