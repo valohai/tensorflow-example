@@ -5,12 +5,12 @@ import tensorflow as tf
 import valohai
 import pandas as pd
 from sklearn.neighbors import LocalOutlierFactor
-def log_metadata(epoch, logs):
-    """Helper function to log training metrics"""
-    with valohai.logger() as logger:
-        logger.log('epoch', epoch)
-        logger.log('accuracy', logs['accuracy'])
-        logger.log('loss', logs['loss'])
+# def log_metadata(epoch, logs):
+#     """Helper function to log training metrics"""
+#     with valohai.logger() as logger:
+#         logger.log('epoch', epoch)
+#         logger.log('accuracy', logs['accuracy'])
+#         logger.log('loss', logs['loss'])
 
 
 def main():
@@ -66,9 +66,9 @@ def main():
     # Evaluate the model and print out the test metrics as JSON
 
     #test_loss, test_accuracy = model.evaluate(x_test,  y_test, verbose=2)
-    with valohai.logger() as logger:
-        logger.log('test_accuracy')
-        logger.log('test_loss')
+    # with valohai.logger() as logger:
+    #     logger.log('test_accuracy')
+    #     logger.log('test_loss')
 
     # Write output files to Valohai outputs directory
     # This enables Valohai to version your data
