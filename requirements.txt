@@ -65,8 +65,7 @@ pandas==1.1.4
 sklearn==0.0
     # via -r requirements.in
 pillow==8.3.2
-    # via -r requirements.in\
-pickle
+    # via -r requirements.in
 protobuf==3.18.0
     # via
     #   tensorboard
