@@ -116,7 +116,7 @@
       - [evaluate1.output.*.json, find-best-model.input.predictions]
       - [evaluate2.output.*.json, find-best-model.input.predictions]
       - [evaluate3.output.*.json, find-best-model.input.predictions]
-      - [evaluate1.input.model, find-best-model.input.models]
+      - [evaluate1.input.model*, find-best-model.input.models]
       - [evaluate2.input.model*, find-best-model.input.models]
       - [evaluate3.input.model*, find-best-model.input.models]
 
