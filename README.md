@@ -69,6 +69,67 @@ Now you are ready to run executions, tasks and pipelines.
 
 [app]: https://app.valohai.com
 
+## Running on Valohai with Terminal
+
+### Configure the repository:
+
+To run your code on Valohai using the terminal, follow these steps:
+
+1. Install Valohai on your machine by running the following command:
+```python
+pip install valohai-cli valohai-utils
+```
+
+2. Log in to Valohai from the terminal using the command:
+```python
+vh login
+```
+
+3. Create a project for your Valohai workflow. 
+
+Start by creating a directory for your project:
+```python
+mkdir valohai-tensorflow-example
+cd valohai-tensorflow-example
+```
+
+Then, create the Valohai project:
+```python
+vh project create
+```
+
+4. Clone the repository to your local machine:
+```python
+git clone https://github.com/valohai/tensorflow-example.git .
+```
+
+Congratulations! You have successfully cloned the repository, and you can now modify the code and run it using Valohai.
+
+### Running Executions:
+
+To run individual steps, execute the following command:
+```python
+vh execution run <step-name> --adhoc
+```
+
+For example, to run the preprocess-dataset step, use the command:
+```python
+vh execution run preprocess-dataset --adhoc
+```
+
+### Running Pipelines:
+
+To run pipelines, use the following command:
+```python
+vh pipeline run <pipeline-name> --adhoc
+```
+
+For example, to run the three-trainings-pipeline-w-deployment pipeline, use the command:
+```python
+vh pipeline run three-trainings-pipeline-w-deployment --adhoc
+```
+
+These commands will execute your code and run it on Valohai's platform.
 ## Running Locally
 
 You can run all the steps of the pipeline locally. This requires Python 3.9 and specific packages, which you can install with:
@@ -98,4 +159,5 @@ Compare predictions requires two or more batch inference results and optionally 
 ```python
 python compare_predictions.py --predictions .valohai/outputs/{local_run_id}/batch-inference/predictions-{suffix}.json .valohai/outputs/{local_run_id}/batch-inference/predictions-{suffix}.json
 ```
+
 
