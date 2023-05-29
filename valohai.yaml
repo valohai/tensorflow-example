@@ -159,6 +159,70 @@
       - name: deploy
         type: deployment
         deployment: deployment-test
+        actions:
+          - when: node-starting
+            then: require-approval
+        endpoints:
+          - predict-digit
+    edges:
+      - [preprocess.output.preprocessed_mnist.npz, train1.input.dataset]
+      - [preprocess.output.preprocessed_mnist.npz, train2.input.dataset]
+      - [preprocess.output.preprocessed_mnist.npz, train3.input.dataset]
+      - [train1.output.model*, evaluate1.input.model]
+      - [train2.output.model*, evaluate2.input.model]
+      - [train3.output.model*, evaluate3.input.model]
+      - [evaluate1.output.*.json, find-best-model.input.predictions]
+      - [evaluate2.output.*.json, find-best-model.input.predictions]
+      - [evaluate3.output.*.json, find-best-model.input.predictions]
+      - [evaluate1.input.model*, find-best-model.input.models]
+      - [evaluate2.input.model*, find-best-model.input.models]
+      - [evaluate3.input.model*, find-best-model.input.models]
+      - [find-best-model.output.model*, deploy.file.predict-digit.model]
+
+- pipeline:
+    name: three-trainings-pipeline-w-deployment-broken
+    nodes:
+      - name: preprocess
+        type: execution
+        step: preprocess-dataset
+      - name: train1
+        type: execution
+        step: train-model
+        override:
+          inputs:
+            - name: dataset
+      - name: train2
+        type: execution
+        step: train-model
+        override:
+          inputs:
+            - name: dataset
+      - name: train3
+        type: execution
+        step: train-model
+        override:
+          inputs:
+            - name: dataset
+      - name: evaluate1
+        type: execution
+        step: batch-inference
+      - name: evaluate2
+        type: execution
+        step: batch-inference
+      - name: evaluate3
+        type: execution
+        step: batch-inference
+        override:
+          image: python/python:3.12.0b1-slim-buster
+      - name: find-best-model
+        type: execution
+        step: compare-predictions
+      - name: deploy
+        type: deployment
+        deployment: deployment-test
+        actions:
+          - when: node-starting
+            then: require-approval
         endpoints:
           - predict-digit
     edges:
