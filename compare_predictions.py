@@ -23,6 +23,10 @@ def main():
             'models': [],
         },
     )
+    # Set metadata
+    metadata = {
+        "valohai.alias": "production-model"  # creates or updates a Valohai data alias to point to this output file
+    }
 
     # here we have some simple example logic to compare predictions to figure out which
     # predictions are the best, so this varies from use-case to use-case
@@ -64,9 +68,15 @@ def main():
 
     print(f'The best model is the one that generated {best_of_best.prediction} ({best_of_best.average_best_guess})')
 
+    # Save the best model
     model_path = next((model for model in valohai.inputs('models').paths() if model_filename in model), '')
     if model_path:
         shutil.copy(model_path, valohai.outputs().path(model_filename))
+
+        # Save the metadata for the best model
+        metadata_path = valohai.outputs().path(f'{model_filename}.metadata.json')
+        with open(metadata_path, 'w') as outfile:
+            json.dump(metadata, outfile)
 
 
 if __name__ == '__main__':
