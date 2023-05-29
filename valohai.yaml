@@ -52,7 +52,7 @@
         optional: true
 
 - pipeline:
-    name: Training Pipeline
+    name: training-pipeline
     nodes:
       - name: preprocess
         type: execution
@@ -71,7 +71,7 @@
       - [train.output.model*, evaluate.input.model]
 
 - pipeline:
-    name: Three-Trainings Pipeline
+    name: three-trainings-pipeline
     nodes:
       - name: preprocess
         type: execution
@@ -121,7 +121,7 @@
       - [evaluate3.input.model*, find-best-model.input.models]
 
 - pipeline:
-    name: Three-Trainings Pipeline with deployment
+    name: three-trainings-pipeline-w-deployment
     nodes:
       - name: preprocess
         type: execution
