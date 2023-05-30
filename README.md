@@ -76,30 +76,30 @@ Now you are ready to run executions, tasks and pipelines.
 To run your code on Valohai using the terminal, follow these steps:
 
 1. Install Valohai on your machine by running the following command:
-```python
+```bash
 pip install valohai-cli valohai-utils
 ```
 
 2. Log in to Valohai from the terminal using the command:
-```python
+```bash
 vh login
 ```
 
 3. Create a project for your Valohai workflow. 
 
 Start by creating a directory for your project:
-```python
+```bash
 mkdir valohai-tensorflow-example
 cd valohai-tensorflow-example
 ```
 
 Then, create the Valohai project:
-```python
+```bash
 vh project create
 ```
 
 4. Clone the repository to your local machine:
-```python
+```bash
 git clone https://github.com/valohai/tensorflow-example.git .
 ```
 
@@ -108,24 +108,24 @@ Congratulations! You have successfully cloned the repository, and you can now mo
 ### Running Executions:
 
 To run individual steps, execute the following command:
-```python
+```bash
 vh execution run <step-name> --adhoc
 ```
 
 For example, to run the preprocess-dataset step, use the command:
-```python
+```bash
 vh execution run preprocess-dataset --adhoc
 ```
 
 ### Running Pipelines:
 
 To run pipelines, use the following command:
-```python
+```bash
 vh pipeline run <pipeline-name> --adhoc
 ```
 
 For example, to run the three-trainings-pipeline-w-deployment pipeline, use the command:
-```python
+```bash
 vh pipeline run three-trainings-pipeline-w-deployment --adhoc
 ```
 
@@ -134,29 +134,29 @@ These commands will execute your code and run it on Valohai's platform.
 
 You can run all the steps of the pipeline locally. This requires Python 3.9 and specific packages, which you can install with:
 
-```python
+```bash
 pip install -r requirements.txt
 ```
 
 The steps require different inputs to run, so you need to run them in order.
 
 Preprocess data has all the required inputs defined as defaults and can be run with:
-```python
+```bash
 python preprocess_dataset.py
 ```
 
 Train model requires the preprocessed dataset, but that is also defined as a default, so you can run:
-```python
+```bash
 python train_model.py
 ```
 
 Batch inference requires both a model and some new data. The new data has default values, but the model needs to be provided, for example from an earlier train model run:
-```python
+```bash
 python batch_inference.py --model .valohai/outputs/{local_run_id}/train-model/model-{suffix}.h5
 ```
 
 Compare predictions requires two or more batch inference results and optionally the corresponding models. We can run it for example like this:
-```python
+```bash
 python compare_predictions.py --predictions .valohai/outputs/{local_run_id}/batch-inference/predictions-{suffix}.json .valohai/outputs/{local_run_id}/batch-inference/predictions-{suffix}.json
 ```
 
