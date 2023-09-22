@@ -255,3 +255,36 @@
       - name: model
         description: Model output file from TensorFlow
         path: model.h5
+
+
+- pipeline:
+    name: three-trainings-pipeline-dynamic
+    parameters:
+      - name: epochs
+        targets:
+          - train.parameters.epochs
+        default: 5
+      - name: learning_rate
+        targets:
+          - train.parameters.learning_rate
+        default: 0.01
+    nodes:
+      - name: preprocess
+        type: execution
+        step: preprocess-dataset
+      - name: train
+        type: task
+        step: train-model
+        override:
+          inputs:
+            - name: dataset
+      - name: evaluate
+        type: execution
+        step: batch-inference
+      - name: find-best-model
+        type: execution
+        step: compare-predictions
+    edges:
+      - [preprocess.output.preprocessed_mnist.npz, train.input.dataset]
+      - [train.output.model*, evaluate.input.model]
+      - [evaluate.output.*.json, find-best-model.input.predictions]
