@@ -11,7 +11,7 @@
 
 - step:
     name: train-model
-    image: tensorflow/tensorflow:2.6.0
+    image: tensorflow/tensorflow:2.16.1
     command:
       - pip install valohai-utils
       - python ./train_model.py {parameters}
@@ -28,7 +28,7 @@
 
 - step:
     name: batch-inference
-    image: tensorflow/tensorflow:2.6.0
+    image: tensorflow/tensorflow:2.16.1
     command:
     - pip install pillow valohai-utils
     - python ./batch_inference.py
@@ -249,7 +249,7 @@
 - endpoint:
     name: predict-digit
     description: predict digits from image inputs ("file" parameter)
-    image: tensorflow/tensorflow:2.6.0
+    image: tensorflow/tensorflow:2.16.1
     wsgi: predict:predict
     files:
       - name: model

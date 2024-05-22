@@ -15,7 +15,7 @@ def main():
 
     valohai.prepare(
         step='batch-inference',
-        image='tensorflow/tensorflow:2.6.0',
+        image='tensorflow/tensorflow:2.16.1',
         default_inputs={
             'model': {
                 'default': None,
