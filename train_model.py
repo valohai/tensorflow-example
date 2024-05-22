@@ -19,7 +19,7 @@ def main():
 
     valohai.prepare(
         step='train-model',
-        image='tensorflow/tensorflow:2.6.0',
+        image='tensorflow/tensorflow:2.16.1',
         default_inputs={
             'dataset': 'https://valohaidemo.blob.core.windows.net/mnist/preprocessed_mnist.npz',
         },
