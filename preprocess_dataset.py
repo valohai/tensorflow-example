@@ -1,25 +1,16 @@
 import numpy as np
-import valohai
-
+import os
 
 def main():
-    # valohai.prepare enables us to update the valohai.yaml configuration file with
-    # the Valohai command-line client by running `valohai yaml step preprocess_dataset.py`
-
-    valohai.prepare(
-        step='preprocess-dataset',
-        image='python:3.9',
-        default_inputs={
-            'dataset': 'https://valohaidemo.blob.core.windows.net/mnist/mnist.npz',
-        },
-    )
-
     # Read input files from Valohai inputs directory
-    # This enables Valohai to version your training data
-    # and cache the data for quick experimentation
-
+    # or local dir, if we're not in Valohai
+    # /valohai/inputs/
+    inputs_dir = os.getenv('VH_INPUTS_DIR', '.inputs')
+    path_to_file = os.path.join(inputs_dir, 'dataset/mnist.npz')
+    print("change!")
     print('Loading data')
-    with np.load(valohai.inputs('dataset').path(), allow_pickle=True) as file:
+    #with np.load(valohai.inputs('dataset').path(), allow_pickle=True) as file:
+    with np.load(path_to_file, allow_pickle=True) as file:
         x_train, y_train = file['x_train'], file['y_train']
         x_test, y_test = file['x_test'], file['y_test']
 
@@ -31,8 +22,16 @@ def main():
     # and upload output it to the default data store
 
     print('Saving preprocessed data')
-    path = valohai.outputs().path('preprocessed_mnist.npz')
-    np.savez_compressed(path, x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
+    
+    # Save generated artefacts to Valohai outputs
+    # so they get versioned
+    # or then use local directory
+    # /valohai/outputs/
+    output_dir = os.getenv('VH_OUTPUTS_DIR', '.outputs')
+    path_to_output_file = os.path.join(output_dir, 'mnist.npz')
+
+    #path_to_output_file = valohai.outputs().path('preprocessed_mnist.npz')
+    np.savez_compressed(path_to_output_file, x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test)
 
 
 if __name__ == '__main__':

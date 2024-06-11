@@ -1,30 +1,42 @@
 ---
 - step:
     name: preprocess-dataset
-    image: python:3.9
+    image: docker.io/python:3.9
     command:
-      - pip install numpy valohai-utils
+      - pip install numpy==1.26.4
       - python ./preprocess_dataset.py
     inputs:
       - name: dataset
         default: https://valohaidemo.blob.core.windows.net/mnist/mnist.npz
+        #default: s3://mybucket/data/sample/*
+        #default: gs://mybucket/data/sample/mnist.npz
+        #default: azure://dd-sample-storage/blob/data/sample/mnist.npz
 
 - step:
     name: train-model
-    image: tensorflow/tensorflow:2.6.0
+    image: europe-west4-docker.pkg.dev/valohai-dev/valohai/tensorflow:2.16.1
     command:
-      - pip install valohai-utils
+      - pip install /valohai/inputs/simulator/*.whl
       - python ./train_model.py {parameters}
     parameters:
       - name: epochs
         default: 5
         type: integer
+        category: tuning
       - name: learning_rate
         default: 0.001
         type: float
+        category: tuning
+      - name: simulator_version
+        default: 0.4.0
+        type: string
+        category: configs
     inputs:
       - name: dataset
         default: https://valohaidemo.blob.core.windows.net/mnist/preprocessed_mnist.npz
+      - name: simulator
+        default: dataset://simulator/{parameter:simulator_version}
+        #default: gs://dd-sample-bucket/simulators/valohai_utils-{parameter:simulator_version}-py3-none-any.whl
 
 - step:
     name: batch-inference
@@ -67,7 +79,7 @@
         type: execution
         step: batch-inference
     edges:
-      - [preprocess.output.preprocessed_mnist.npz, train.input.dataset]
+      - [preprocess.output.*, train.input.dataset]
       - [train.output.model*, evaluate.input.model]
 
 - pipeline:
