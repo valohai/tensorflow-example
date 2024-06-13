@@ -1,8 +1,16 @@
 import uuid
+import debugpy
 
 import numpy as np
 import tensorflow as tf
 import valohai
+import json
+
+# Listen on port 5678
+debugpy.listen(5678)
+
+# The script is halted here, until a debugger is attached
+debugpy.wait_for_client()
 
 
 def log_metadata(epoch, logs):
@@ -14,21 +22,6 @@ def log_metadata(epoch, logs):
 
 
 def main():
-    # valohai.prepare enables us to update the valohai.yaml configuration file with
-    # the Valohai command-line client by running `valohai yaml step train_model.py`
-
-    valohai.prepare(
-        step='train-model',
-        image='tensorflow/tensorflow:2.6.0',
-        default_inputs={
-            'dataset': 'https://valohaidemo.blob.core.windows.net/mnist/preprocessed_mnist.npz',
-        },
-        default_parameters={
-            'learning_rate': 0.001,
-            'epochs': 5,
-        },
-    )
-
     # Read input files from Valohai inputs directory
     # This enables Valohai to version your training data
     # and cache the data for quick experimentation
@@ -72,6 +65,16 @@ def main():
     suffix = uuid.uuid4()
     output_path = valohai.outputs().path(f'model-{suffix}.h5')
     model.save(output_path)
+
+    model_metadata = {
+        "simulator-version": valohai.parameters("simulator_version").value,
+        "valohai.tags": [
+            valohai.parameters("simulator_version").value
+        ]
+    }
+
+    with open(f"{output_path}.metadata.json", "w") as f:
+        f.write(json.dumps(model_metadata))
 
 
 if __name__ == '__main__':

@@ -7,10 +7,23 @@
       - python ./preprocess_dataset.py
     inputs:
       - name: dataset
+        #default: dataset://audio/latest
         default: https://valohaidemo.blob.core.windows.net/mnist/mnist.npz
         #default: s3://mybucket/data/sample/*
         #default: gs://mybucket/data/sample/mnist.npz
         #default: azure://dd-sample-storage/blob/data/sample/mnist.npz
+
+
+
+
+
+
+- step:
+    name: fetch-data-bq
+    image: python:3.7
+    command:
+      - pip install google-cloud-bigquery[bqstorage,pandas]
+      - python ./fetch.py {parameters}
 
 - step:
     name: train-model
