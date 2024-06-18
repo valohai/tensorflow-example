@@ -6,12 +6,6 @@ import tensorflow as tf
 import valohai
 import json
 
-# Listen on port 5678
-debugpy.listen(5678)
-
-# The script is halted here, until a debugger is attached
-debugpy.wait_for_client()
-
 
 def log_metadata(epoch, logs):
     """Helper function to log training metrics"""

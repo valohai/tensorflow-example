@@ -1,18 +1,6 @@
 import numpy as np
 import os
 
-# data:
-# where do I read data from?
-# gs://
-# /valohai/inputs/
-# /valohai/outputs/
-
-# parameters (config, hyperparam etc.)
-# argparse --epoch=23, JSON, YAML
-
-# metadata / metrics
-# JSON
-
 def main():
     # Read input files from Valohai inputs directory
     # or local dir, if we're not in Valohai

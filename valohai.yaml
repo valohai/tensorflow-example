@@ -29,7 +29,6 @@
     name: train-model
     image: europe-west4-docker.pkg.dev/valohai-dev/valohai/tensorflow:2.16.1
     command:
-      - pip install /valohai/inputs/simulator/*.whl
       - python ./train_model.py {parameters}
     parameters:
       - name: epochs
@@ -47,10 +46,6 @@
     inputs:
       - name: dataset
         default: https://valohaidemo.blob.core.windows.net/mnist/preprocessed_mnist.npz
-      - name: simulator
-        default: dataset://simulator/{parameter:simulator_version}
-        #default: gs://dd-sample-bucket/simulators/valohai_utils-{parameter:simulator_version}-py3-none-any.whl
-
 - step:
     name: batch-inference
     image: tensorflow/tensorflow:2.6.0
