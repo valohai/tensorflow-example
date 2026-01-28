@@ -53,6 +53,11 @@
 
 - pipeline:
     name: training-pipeline
+    parameters:
+      - name: epochs_pipeline
+        targets:
+          - train.parameter.epochs
+        default: [ 5, 2 ]
     nodes:
       - name: preprocess
         type: execution
