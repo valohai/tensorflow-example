@@ -261,6 +261,9 @@
       - name: model
         description: Model output file from TensorFlow
         path: model.h5
+      - name: model_2
+        description: Model2 output file from TensorFlow
+        path: model.h5
 
 
 - pipeline:
