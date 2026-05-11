@@ -40,7 +40,7 @@ VALOHAI_ENVIRONMENT_ID=<environment-id>
 VALOHAI_API_URL=https://app.valohai.com/api/v0
 ```
 
-## Notes
+## Other Notes
 
 - All child pipeline node commits are set to `main`.
 - The parent collector step currently waits for child pipelines by default.
