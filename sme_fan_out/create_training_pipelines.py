@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 import requests
-
+# https://app.valohai.com/api/v0/pipelines/
 
 VALOHAI_API_URL = os.environ.get("VALOHAI_API_URL", "https://app.valohai.com/api/v0")
 
@@ -198,15 +198,22 @@ def build_training_pipeline_payload(dataset_uri: str) -> dict:
 
 
 def create_pipeline(dataset_uri: str) -> dict:
-    response = requests.post(
-        f"{VALOHAI_API_URL}/pipelines/",
-        headers={
-            "Authorization": f"Token {TOKEN}",
-            "Content-Type": "application/json",
-        },
+    response = requests.request(
+        url="https://app.valohai.com/api/v0/pipelines/",
+        method="POST",
+        headers={"Authorization": f"Token {TOKEN}"},
         json=build_training_pipeline_payload(dataset_uri),
-        timeout=60,
     )
+    # response = requests.post(
+    #     # f"{VALOHAI_API_URL}/pipelines/",
+    #     "https://app.valohai.com/api/v0/pipelines/",
+    #     headers={
+    #         "Authorization": f"Token {TOKEN}",
+    #         "Content-Type": "application/json",
+    #     },
+    #     json=build_training_pipeline_payload(dataset_uri),
+    #     timeout=60,
+    # )
 
     if response.status_code == 400:
         raise RuntimeError(response.json())
