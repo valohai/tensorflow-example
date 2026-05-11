@@ -3,7 +3,7 @@
     image: python:3.11
     command:
       - pip install requests
-      - python create_training_pipelines.py
+      - python /valohai/repository/sme_fan_out/create_training_pipelines.py
     inputs:
       - name: dataset
         optional: true
@@ -13,7 +13,7 @@
     image: python:3.11
     command:
       - pip install requests
-      - python collect_training_results.py
+      - python /valohai/repository/sme_fan_out/collect_training_results.py
     inputs:
       - name: pipeline_ids
     parameters:
