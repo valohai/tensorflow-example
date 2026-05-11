@@ -1,0 +1,36 @@
+- step:
+    name: create-training-pipelines
+    image: python:3.11
+    command:
+      - pip install requests
+      - python create_training_pipelines.py
+    inputs:
+      - name: dataset
+        optional: true
+
+- step:
+    name: collect-training-results
+    image: python:3.11
+    command:
+      - pip install requests
+      - python collect_training_results.py
+    inputs:
+      - name: pipeline_ids
+    parameters:
+      - name: wait_for_completion
+        type: flag
+        default: true
+
+- pipeline:
+    name: batch-training-pipeline
+    nodes:
+      - name: create-training-pipelines
+        type: execution
+        step: create-training-pipelines
+
+      - name: collect-training-results
+        type: execution
+        step: collect-training-results
+
+    edges:
+      - [create-training-pipelines.output.pipeline_ids.json, collect-training-results.input.pipeline_ids]
